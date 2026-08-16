@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selected work — Eric Hubbard</title>
+<meta name="description" content="Three worked examples: an agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
+<link rel="canonical" href="https://erichubbard.io/work/">
+<meta property="og:title" content="Selected work — Eric Hubbard">
+<meta property="og:description" content="An agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://erichubbard.io/work/">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <a class="wordmark" href="/">Eric Hubbard</a>
+  <nav>
+    <a href="/">About</a>
+    <a href="/work/" aria-current="page">Work</a>
+  </nav>
+</header>
+
+<main>
+
+  <p class="eyebrow">Selected work</p>
+  <h1>Three things I built, and what was hard about each</h1>
+  <div class="col">
+    <p class="lede">One automation product, one architecture, one analysis. They are here because
+    each went wrong in a different way first.</p>
+    <p class="note"><span class="marker">Note.</span> Client names, employers, account identifiers,
+    colleague names, hostnames and schema names have been removed throughout, and every figure shown
+    is synthetic. Dates, decisions and reasoning are unchanged.</p>
+  </div>
+
+  <!-- 1 -->
+  <article class="entry">
+    <p class="status">Automation · 2026 · in weekly use</p>
+    <h2>The weekly business review that builds itself</h2>
+    <div class="col">
+      <p>A packaged agent skill that assembles an exec-ready weekly deck for a marketplace account
+      out of five separate systems — warehouse metrics, Linear, Asana, Zendesk, and a shared
+      customer tracker. Twelve scripts, one JSON config per account, its own SQL and house style
+      guide.</p>
+      <p>The engineering was the easy half. A weekly review is a document people argue with out
+      loud, so the design constraint was never speed — it was that the deck must never be
+      confidently wrong. Most of the work went into failing closed on stale data, distinguishing
+      "source not checked" from "no activity," and catching a permissions bug that returned a
+      plausible-looking subset instead of an error.</p>
+      <p><a class="readmore" href="/work/wbr-exec-brief/">Read the case study →</a></p>
+    </div>
+  </article>
+
+  <!-- 2 -->
+  <article class="entry">
+    <p class="status">Architecture · 2026</p>
+    <h2>Three layers for eight marketplace APIs</h2>
+    <div class="col">
+      <p>Customer service operations touched eight external systems, each with its own auth model —
+      two-layer token exchange with request signing on one, OAuth refresh on another, stateless
+      basic auth on a third. Every new automation re-solved the same problems, and business logic
+      kept getting welded to whichever API it happened to start from.</p>
+      <p>The fix was a strict three-layer split. <strong>Connectors</strong> know one API each and
+      contain no business logic — they expose what the API can do, output JSON, and compose.
+      <strong>Jobs</strong> orchestrate connectors to accomplish exactly one business outcome, end
+      to end, independently. <strong>Pipelines</strong> chain jobs into multi-step workflows.</p>
+      <p>The third layer does not exist yet, and the documentation says so in those words. Naming
+      the empty layer is what stops the next person quietly implementing it inside a job — which is
+      how the original tangle formed.</p>
+    </div>
+
+    <figure>
+      <div class="fig-scroll">
+      <svg viewBox="0 0 900 470" role="img" aria-labelledby="archtitle archdesc" style="max-width:900px">
+        <title id="archtitle">Three-layer connector architecture</title>
+        <desc id="archdesc">Layer one holds eight single-purpose API connectors. Layer two holds jobs that orchestrate them, of which one is built. Layer three, pipelines, is drawn dashed because it has not been built.</desc>
+        <g fill="none" stroke="currentColor" opacity="0.16">
+          <line x1="0" y1="196" x2="900" y2="196" stroke-width="1"/>
+          <line x1="0" y1="322" x2="900" y2="322" stroke-width="1"/>
+        </g>
+
+        <!-- layer 1 -->
+        <text x="0" y="18" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 1 — CONNECTORS · one API each, no business logic</text>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="currentColor">
+          <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+            <rect x="0"   y="34" width="210" height="46" rx="2"/>
+            <rect x="230" y="34" width="210" height="46" rx="2"/>
+            <rect x="460" y="34" width="210" height="46" rx="2"/>
+            <rect x="690" y="34" width="210" height="46" rx="2"/>
+            <rect x="0"   y="96" width="210" height="46" rx="2"/>
+            <rect x="230" y="96" width="210" height="46" rx="2"/>
+            <rect x="460" y="96" width="210" height="46" rx="2"/>
+            <rect x="690" y="96" width="210" height="46" rx="2"/>
+          </g>
+          <text x="16"  y="63">Amazon</text>
+          <text x="246" y="63">eBay</text>
+          <text x="476" y="63">Walmart</text>
+          <text x="706" y="63">Zendesk</text>
+          <text x="16"  y="125">Order management</text>
+          <text x="246" y="125">Carriers</text>
+          <text x="476" y="125">Datastore</text>
+          <text x="706" y="125">Pricing data</text>
+        </g>
+
+        <!-- arrow -->
+        <g stroke="currentColor" stroke-opacity="0.4" fill="none">
+          <line x1="450" y1="152" x2="450" y2="184" stroke-width="1.5"/>
+          <path d="M445 178 L450 186 L455 178" stroke-width="1.5"/>
+        </g>
+
+        <!-- layer 2 -->
+        <text x="0" y="222" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 2 — JOBS · one business outcome each, runs end to end alone</text>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="currentColor">
+          <rect x="0" y="238" width="290" height="52" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.5"/>
+          <text x="16" y="262">returns-delivered</text>
+          <text x="16" y="280" font-size="11.5" opacity="0.6">tracks returns → writes delivery dates back</text>
+
+          <g stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4" fill="none">
+            <rect x="310" y="238" width="290" height="52" rx="2"/>
+            <rect x="620" y="238" width="280" height="52" rx="2"/>
+          </g>
+          <text x="326" y="269" font-size="12.5" opacity="0.45">further jobs</text>
+          <text x="636" y="269" font-size="12.5" opacity="0.45">further jobs</text>
+        </g>
+
+        <!-- arrow -->
+        <g stroke="currentColor" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4">
+          <line x1="450" y1="300" x2="450" y2="310" stroke-width="1.5"/>
+        </g>
+
+        <!-- layer 3 -->
+        <text x="0" y="348" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 3 — PIPELINES · chains jobs into end-to-end processes</text>
+        <rect x="0" y="364" width="900" height="76" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
+        <text x="24" y="398" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="currentColor" opacity="0.75">Not built yet.</text>
+        <text x="24" y="420" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.55">Named in the documentation so the next person builds it here, and not inside a job.</text>
+      </svg>
+      </div>
+      <figcaption>The architecture as documented. Layer 3 is drawn dashed because it does not exist —
+      an honest diagram of a system in progress is more useful than an aspirational one, and it is
+      the fastest way to tell a new contributor where their code belongs.</figcaption>
+    </figure>
+  </article>
+
+  <!-- 3 -->
+  <article class="entry">
+    <p class="status">Analysis · 2026</p>
+    <h2>What returns actually cost, and what the data would not tell us</h2>
+    <div class="col">
+      <p>A question that sounds like one query: what do marketplace returns cost us, and why are
+      customers returning things? The answer took four cuts — revenue impact by marketplace, returned
+      dollars by reason, the worst-offending titles under "not as described," and returns as a share
+      of gross sales.</p>
+      <p>Most of the effort went into decisions that never appear in the output. The obvious join key
+      was the wrong one: matching returns to order lines on the channel line id matched 82% of rows,
+      because one marketplace's line ids do not align — matching on order plus SKU matched 96%. The
+      refund amount field was about 90% null, so returns had to be priced off the originating order
+      line instead. Line price is per unit, and order lines need deduplicating to one row per order
+      and SKU before joining, or multi-line units double-count. Each of those is documented in the
+      query header, because the next person to run it will otherwise rediscover them the expensive
+      way.</p>
+    </div>
+
+    <figure>
+      <div class="fig-scroll chart">
+      <svg viewBox="0 0 860 290" role="img" aria-labelledby="rettitle retdesc" style="max-width:860px">
+        <title id="rettitle">Returned revenue by reason category</title>
+        <desc id="retdesc">Horizontal bar chart of synthetic returned revenue by reason. Not as described leads at 184,200 dollars, followed by changed mind at 96,400, arrived damaged at 71,800, no longer needed at 58,300, wrong item sent at 42,100 and defective on arrival at 38,900.</desc>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor">
+          <text x="0" y="14" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.5" opacity="0.55">RETURNED REVENUE BY REASON · 90 DAYS · SYNTHETIC</text>
+
+          <g text-anchor="end" opacity="0.85">
+            <text x="196" y="66">Not as described</text>
+            <text x="196" y="104">Changed mind</text>
+            <text x="196" y="142">Arrived damaged</text>
+            <text x="196" y="180">No longer needed</text>
+            <text x="196" y="218">Wrong item sent</text>
+            <text x="196" y="256">Defective on arrival</text>
+          </g>
+
+          <g fill="currentColor">
+            <rect x="210" y="48"  width="520" height="24" opacity="0.72"/>
+            <rect x="210" y="86"  width="272" height="24" opacity="0.34"/>
+            <rect x="210" y="124" width="203" height="24" opacity="0.34"/>
+            <rect x="210" y="162" width="165" height="24" opacity="0.34"/>
+            <rect x="210" y="200" width="119" height="24" opacity="0.34"/>
+            <rect x="210" y="238" width="110" height="24" opacity="0.34"/>
+          </g>
+
+          <g font-family="ui-monospace, Menlo, monospace" font-size="12" opacity="0.75">
+            <text x="742" y="66">$184,200</text>
+            <text x="494" y="104">$96,400</text>
+            <text x="425" y="142">$71,800</text>
+            <text x="387" y="180">$58,300</text>
+            <text x="341" y="218">$42,100</text>
+            <text x="332" y="256">$38,900</text>
+          </g>
+        </g>
+      </svg>
+      </div>
+      <figcaption>Synthetic figures, real shape. "Not as described" dominating is the finding that
+      sends you looking for listing-accuracy problems rather than fulfilment problems.</figcaption>
+    </figure>
+
+    <div class="col">
+      <p>The part of this I would put in front of a hiring manager is not the chart. It is the
+      header of the query:</p>
+    </div>
+
+<pre><code><span class="c">-- Returns revenue impact by marketplace and reason.
+--
+-- Join returns -> order_lines on (channel_order_id, channel_sku), NOT on the
+-- channel line id: 96% match vs 82%. One marketplace's line ids don't align.
+--
+-- refund_amount is ~90% NULL on this source. Price the return off the
+-- originating order line instead of trusting the refund field.
+--
+-- line_item_price is PER UNIT. Returned revenue = line_item_price * return_qty.
+-- Dedupe order_lines to one row per (order, sku) before joining, or units
+-- with multiple lines double-count.</span>
+
+<span class="k">with</span> lines <span class="k">as</span> (
+  <span class="k">select</span> channel_order_id, channel_sku,
+         any_value(line_item_price) <span class="k">as</span> unit_price
+  <span class="k">from</span>   order_lines
+  <span class="k">group by</span> 1, 2                     <span class="c">-- one row per (order, sku)</span>
+)
+<span class="k">select</span>   r.marketplace,
+         r.reason_category,
+         sum(l.unit_price * r.return_quantity) <span class="k">as</span> returned_revenue
+<span class="k">from</span>     returns r
+<span class="k">join</span>     lines   l <span class="k">using</span> (channel_order_id, channel_sku)
+<span class="k">group by</span> 1, 2
+<span class="k">order by</span> returned_revenue <span class="k">desc</span>;</code></pre>
+
+    <div class="col">
+      <div class="callout">
+        <p><strong>The limit worth stating.</strong> "Not as described" is the largest bucket, and it
+        is also the least informative — it is a dropdown selection, not an explanation. One
+        marketplace exposes the buyer's free-text comment through its post-order API, so I wrote a
+        second script to pull verbatims per return and read them. <strong>The largest marketplace has
+        no equivalent</strong> — neither its API nor the warehouse carries buyer free-text, only the
+        reason code.</p>
+        <p>So the qualitative depth behind this chart exists for part of the business and cannot
+        exist for the rest. That belongs in the deliverable, stated plainly, rather than being
+        quietly papered over by presenting one channel's verbatims as if they described all of them.</p>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer class="site-foot">
+  <span>Eric Hubbard · North Idaho</span>
+  <span><a href="/">About</a></span>
+</footer>
+
+</div>
+</body>
+</html>

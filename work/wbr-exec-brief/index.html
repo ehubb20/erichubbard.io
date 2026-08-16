@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The weekly business review that builds itself — Eric Hubbard</title>
+<meta name="description" content="Case study: an agent-run pipeline that assembles a weekly marketplace business review from five sources, and the judgment calls that keep its numbers defensible.">
+<link rel="canonical" href="https://erichubbard.io/work/wbr-exec-brief/">
+<meta property="og:title" content="The weekly business review that builds itself">
+<meta property="og:description" content="An agent-run pipeline that assembles a weekly marketplace business review from five sources — and the judgment calls that keep its numbers defensible.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://erichubbard.io/work/wbr-exec-brief/">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <a class="wordmark" href="/">Eric Hubbard</a>
+  <nav>
+    <a href="/">About</a>
+    <a href="/work/" aria-current="page">Work</a>
+  </nav>
+</header>
+
+<main>
+
+  <p class="eyebrow">Case study · 2026</p>
+  <h1>The weekly business review that builds itself</h1>
+  <p class="standfirst">A packaged agent skill that assembles an exec-ready weekly deck for a
+  marketplace account from five separate systems. The engineering was the easy half; the hard half
+  was making every number on it survive being questioned in the room.</p>
+
+  <dl class="meta">
+    <div><dt>Role</dt><dd>Sole designer and author</dd></div>
+    <div><dt>Built</dt><dd>Mid 2026, still in weekly use</dd></div>
+    <div><dt>Shape</dt><dd>Claude Code skill — 12 scripts, per-account JSON config, own SQL</dd></div>
+    <div><dt>Sources</dt><dd>Warehouse worksheet, Linear, Asana, Zendesk, a shared customer tracker</dd></div>
+    <div><dt>Run by</dt><dd>Account owners, not me</dd></div>
+  </dl>
+
+  <figure>
+    <div class="fig-scroll"><a href="deck/"><img src="deck/preview.svg" alt="Preview of the generated weekly business review deck, showing the headline slide with GMV, units, in-stock rate and days of supply." style="width:100%;min-width:660px;height:auto;border:1px solid var(--rule)"></a></div>
+    <figcaption><strong>The output.</strong> A rebuilt sample deck with entirely synthetic data —
+    invented company, invented figures. <a href="deck/">Read the full deck →</a> The structure,
+    the footnotes and the editorial rules are the real ones.</figcaption>
+  </figure>
+
+  <div class="col">
+
+  <h2>The problem</h2>
+
+  <p>A growth and sales team ran a weekly business review for each of its marketplace accounts.
+  Every week, for every account, someone rebuilt the same deck by hand: sales and inventory metrics
+  out of a warehouse-backed worksheet, work-in-flight out of Linear and Asana, customer-facing
+  status out of a shared action-item tracker, ticket volumes out of Zendesk. Each deck took a couple
+  of hours. There were five accounts.</p>
+
+  <p>The cost was not really the hours. It was that a deck assembled over two hours on Tuesday
+  described a business as it stood on Monday, and the questions it raised — <em>why is cover down,
+  who owns that, is it already ticketed</em> — had to be answered by going back to the same five
+  systems by hand.</p>
+
+  <h2>The constraint that shaped everything</h2>
+
+  <p>The obvious framing is "generate the slides automatically." That framing produces a bad
+  system.</p>
+
+  <p>A weekly review is a document people make decisions against, out loud, with the account owner
+  in the room. Its value is entirely in whether the numbers hold up when someone pushes on one. And
+  an automated deck is <em>more</em> dangerous than a hand-built one, because a hand-built deck
+  carries the visible fingerprints of a person who checked — while a generated one arrives looking
+  equally confident whether or not the underlying source returned anything.</p>
+
+  <p>So the design constraint was not completeness or speed. It was: <strong>the deck must never be
+  confidently wrong.</strong> Everything below follows from that.</p>
+
+  <h2>What I built</h2>
+
+  <p>A packaged agent skill — twelve scripts, one JSON config per account, its own SQL, its own
+  fonts and brand assets, and a written operating procedure the agent follows each run. The
+  pipeline is five stages: refresh the worksheet and wait for all fourteen data objects to land;
+  extract it into a single JSON payload (48 metric rows, a 13-week trend series, freshness stamp);
+  collect work in flight from four systems — Linear and Asana over MCP, Zendesk, and the shared
+  tracker read through the Drive connector; write the narrative against a house style guide; render
+  the deck.</p>
+
+  <p>Two structural decisions did most of the work. <strong>Adding an account is a config file, not
+  code</strong> — five are configured, and the sixth took an afternoon of writing JSON rather than
+  a branch. And <strong>the deck is the only deliverable.</strong> An earlier version also drafted
+  a summary email; that went out of scope on 2026-08-04, because reading the group archive needed
+  the pipeline's only domain-admin dependency and the shared tracker already curated the threads
+  that mattered. The email scripts are still in the repo, unwired, with the decision and its
+  reasoning recorded in the skill file — so if the constraint changes, the next person finds the
+  path rather than rediscovering it.</p>
+
+  <h2>The judgment calls</h2>
+
+  <ol class="calls">
+
+    <li>
+      <h3>Fail closed on stale data</h3>
+      <p>The worksheet does not refresh itself. The extractor refuses to run once the snapshot is
+      more than three days old, and the override flag is documented as something you may not use
+      without telling the person receiving the deck that the data is old and why. The most common
+      way a run stops is this check firing — which is the correct most-common failure.</p>
+    </li>
+
+    <li>
+      <h3>A missing source is coverage information, not silence</h3>
+      <p>This is the rule I would keep if I could keep only one. When a source returns nothing, the
+      deck says <em>"source not checked"</em> or <em>"returned no rows"</em> — never "no activity."
+      Those are different claims: one is a fact about the run, the other is a finding about the
+      business, and a pipeline that blurs them will eventually tell an account owner their client
+      was quiet during a week the client was furious.</p>
+    </li>
+
+    <li>
+      <h3>Never invent a number; never invent an owner</h3>
+      <p>Every figure traces to the worksheet payload, a corrected velocity value, or a named work
+      item. Blank is reported blank. An unowned ticket renders as <code>Unassigned</code> rather
+      than being attributed to the most likely person — because a plausible guess on a slide
+      becomes a real expectation on a real human being.</p>
+    </li>
+
+    <li>
+      <h3>Finding the unit bug, and printing the correction on the slide</h3>
+      <p>The velocity table stored an <em>average daily</em> revenue figure under a column named for
+      an N-day window. Read literally, estimated lost revenue was understated by a factor of 28.
+      The pipeline corrects it — and then states on the slide that it corrected it, cites the
+      source line, and gives the accuracy bound against the core tables (about 2.6%), with the
+      explicit note that this is directional and <em>not reconciliation-grade</em>. A corrected
+      number with a stated error bar is worth more than a clean-looking number of unknown
+      provenance.</p>
+    </li>
+
+    <li>
+      <h3>Credential scope is a data-quality problem</h3>
+      <p>The service-account path to the issue tracker had access to one of thirty-eight teams. It
+      did not error — it returned HTTP 200 and a small, entirely plausible subset: 19 issues where
+      the fully-scoped path found 79, and zero of thirty-eight on one project. A permissions
+      failure that looks like an empty week is the single most dangerous failure mode in the whole
+      pipeline, because nothing about the output looks wrong. The run now fetches as the operator,
+      and the skill file explains at length why the convenient path is not permitted.</p>
+    </li>
+
+    <li>
+      <h3>Count by title, not by full-text match</h3>
+      <p>Issue search matches descriptions as well as titles, so tickets spanning a dozen accounts
+      matched on a passing mention and inflated every count. A short account keyword matched 453
+      issues because it was a substring of the word "account." The scope rule is now: the account's
+      project, or the account named in the <em>title</em>. Titles are the reliable signal of whose
+      work an issue is.</p>
+    </li>
+
+    <li>
+      <h3>Search by function, not by the shape you expect</h3>
+      <p>One tracker is organised by account; the other by function — pricing, listings, triage.
+      Searching the second one for an account name returns almost nothing and invites the
+      conclusion that there is no work in flight. There is plenty. The config carries per-account
+      text queries for exactly this reason, and the procedure says so in the imperative, because
+      the wrong conclusion here is silent.</p>
+    </li>
+
+  </ol>
+
+  <h2>Where it landed</h2>
+
+  <p>Five accounts configured; a weekly deck that takes minutes rather than hours; a first-run
+  preflight check so a new operator on a new machine resolves their own access problems before they
+  produce a wrong deck instead of after.</p>
+
+  <p>The outcome I actually care about is the least visible one: <strong>the people who own the
+  accounts run it themselves.</strong> That was the design goal from the start. A pipeline only one
+  person can operate is not automation — it is a bottleneck with better tooling, and it fails the
+  week that person is on vacation. Most of the written procedure exists to make the tool
+  transferable rather than to make it clever.</p>
+
+  <p class="note"><span class="marker">Note.</span> Client, employer, account identifiers,
+  colleague names, hostnames and schema names have been removed throughout. All figures in the
+  sample deck are synthetic. Dates, technical decisions and reasoning are unchanged.</p>
+
+  </div>
+
+  <p><a href="/work/">← All work</a></p>
+
+</main>
+
+<footer class="site-foot">
+  <span>Eric Hubbard · North Idaho</span>
+  <span><a href="/">About</a></span>
+</footer>
+
+</div>
+</body>
+</html>

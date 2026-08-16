@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample weekly business review — synthetic data — Eric Hubbard</title>
+<meta name="description" content="A rebuilt sample of the automated weekly business review deck, using entirely synthetic data. Structure, footnotes and editorial rules are the real ones.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://erichubbard.io/work/wbr-exec-brief/deck/">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+<style>
+  .slide { border-top: 1px solid var(--rule-hard); padding: 2.5rem 0 1.5rem; }
+  .slide-no {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
+    color: var(--ink-muted); display: flex; justify-content: space-between; margin-bottom: 1.25rem;
+  }
+  .slide h2 { margin-top: 0.2rem; font-size: 1.55rem; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1.5rem; margin: 1.75rem 0; }
+  .kpi .label {
+    font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--ink-muted); display: block; margin-bottom: 0.35rem;
+  }
+  .kpi .val { font-size: 1.65rem; font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -0.02em; display: block; }
+  .kpi .delta { font-family: var(--mono); font-size: 0.76rem; display: block; margin-top: 0.2rem; }
+  .twoup { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem 2.5rem; }
+  .subhead {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 0.6rem;
+  }
+  .bullets { margin: 0; padding-left: 1.1rem; font-size: 0.92rem; }
+  .bullets li { margin-bottom: 0.5rem; }
+  .items { list-style: none; margin: 1.25rem 0; padding: 0; }
+  .items li { border-top: 1px solid var(--rule); padding: 0.7rem 0; font-size: 0.9rem; }
+  .items .ref { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--ink-muted); }
+  .items .who { color: var(--ink-muted); font-size: 0.82rem; }
+  .items .gloss { color: var(--ink-soft); font-size: 0.86rem; display: block; margin-top: 0.25rem; }
+  .asks { list-style: none; counter-reset: ask; margin: 1.25rem 0; padding: 0; }
+  .asks li { counter-increment: ask; border-top: 1px solid var(--rule); padding: 0.9rem 0 0.9rem 2.6rem; position: relative; font-size: 0.95rem; }
+  .asks li::before {
+    content: counter(ask, decimal-leading-zero); position: absolute; left: 0; top: 1rem;
+    font-family: var(--mono); font-size: 0.75rem; color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <a class="wordmark" href="/">Eric Hubbard</a>
+  <nav>
+    <a href="/">About</a>
+    <a href="/work/">Work</a>
+  </nav>
+</header>
+
+<main>
+
+  <p class="synthetic-banner"><strong>Everything on this page is invented.</strong> The company,
+  the figures, the SKUs, the ticket references and the people are all fictional, generated to match
+  the shape of a real deck. What is real is the structure, the footnotes, the coverage notes and the
+  editorial rules — those are reproduced exactly.
+  <a href="../">Back to the case study →</a></p>
+
+  <p class="eyebrow">Marketplace performance review</p>
+  <h1>Weekly Business Review</h1>
+  <p class="standfirst">Record week — GMV up 58.4% to $1.85M — on five days of inventory cover.</p>
+
+  <dl class="meta">
+    <div><dt>Week ending</dt><dd>2026-08-09</dd></div>
+    <div><dt>Account</dt><dd>Northbeam Devices <span class="c">(sample)</span></dd></div>
+    <div><dt>Status</dt><dd>Prepared for Growth &amp; Sales · Internal</dd></div>
+    <div><dt>Data as of</dt><dd>2026-08-12 14:21 PT · inventory snapshot 2026-08-12</dd></div>
+  </dl>
+
+  <!-- 02 -->
+  <section class="slide">
+    <div class="slide-no"><span>Week ending 2026-08-09</span><span>02</span></div>
+    <h2>Headlines</h2>
+
+    <div class="kpis">
+      <div class="kpi"><span class="label">GMV / week</span><span class="val">$1,847,300</span><span class="delta pos">+58.4% WoW</span></div>
+      <div class="kpi"><span class="label">Units sold / week</span><span class="val">5,412</span><span class="delta pos">+41.2% WoW</span></div>
+      <div class="kpi"><span class="label">In-stock rate</span><span class="val">41.7%</span><span class="delta pos">+3.8 pp WoW</span></div>
+      <div class="kpi"><span class="label">Stagnant &gt;90d cover</span><span class="val">39.2%</span><span class="delta pos">−7.1 pp WoW</span></div>
+    </div>
+
+    <div class="twoup">
+      <div>
+        <p class="subhead">What's working</p>
+        <ul class="bullets">
+          <li>Week GMV $1,847,300, up 58.4%, with every channel up.</li>
+          <li>Amazon nearly doubled (+94.7%) and eBay rose 71.2% to $712,540.</li>
+          <li>Units 5,412, up 41.2%, on traffic up 15.3% — volume and demand moved together.</li>
+          <li>Retail readiness is the best on the template: A+ 71.4%, reviews 98.6%, coverage 100%.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="subhead">What needs attention</p>
+        <ul class="bullets">
+          <li>Days of supply is 5 — the account is selling faster than it can restock.</li>
+          <li>Featured offer win rate 6.2% and price-competitiveness 24.8%; the buy box is being lost almost always.</li>
+          <li>In-stock rate 41.7% even after a 3.8 pp gain — under half the catalogue is buyable.</li>
+          <li>Backmarket is down 19.4% year on year, the only channel below its prior year.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="slide">
+    <div class="slide-no"><span>Sales performance</span><span>03</span></div>
+    <h2>GMV &amp; Units</h2>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Metric</th><th>Week</th><th>MTD</th><th>YTD</th><th>YoY</th></tr></thead>
+        <tbody>
+          <tr><th>GMV</th><td class="num" data-label="Week">$1,847,300</td><td class="num" data-label="MTD">$2,640,900</td><td class="num" data-label="YTD">$52,406,800</td><td class="num pos" data-label="YoY">+138.2%</td></tr>
+          <tr><th>Units sold</th><td class="num" data-label="Week">5,412</td><td class="num" data-label="MTD">7,810</td><td class="num" data-label="YTD">121,340</td><td class="num pos" data-label="YoY">+74.5%</td></tr>
+          <tr><th>Shipments</th><td class="num" data-label="Week">4,290</td><td class="num" data-label="MTD">7,720</td><td class="num" data-label="YTD">94,110</td><td class="num" data-label="YoY">—</td></tr>
+          <tr><th>Units returned<span class="c">*</span></th><td class="num" data-label="Week">98</td><td class="num" data-label="MTD">154</td><td class="num" data-label="YTD">3,420</td><td class="num neg" data-label="YoY">+288.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Week $1,847,300, up 58.4% on the prior week's $1.17M — the strongest week of the year. Year to
+    date $52.41M, up 138.2%, across eBay $30.70M, Backmarket $11.88M, Amazon $8.94M and Walmart $0.88M.</p>
+    <p class="note"><span class="marker">*</span> The returns feed from one channel stopped landing
+    on 2026-03-22, so units returned understates the account and its year-on-year is not comparable.
+    13 complete Mon–Sun weeks. MTD compares a partial month against the full prior month — negative
+    MTD movement is that window, not a decline.</p>
+  </section>
+
+  <!-- 04 -->
+  <section class="slide">
+    <div class="slide-no"><span>GMV by marketplace</span><span>04</span></div>
+    <h2>Channel Mix</h2>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Channel</th><th>Week</th><th>MTD</th><th>YTD</th><th>YoY</th></tr></thead>
+        <tbody>
+          <tr><th>eBay</th><td class="num" data-label="Week">$712,540</td><td class="num" data-label="MTD">$1,018,300</td><td class="num" data-label="YTD">$30,704,100</td><td class="num" data-label="YoY">n/a</td></tr>
+          <tr><th>Backmarket</th><td class="num" data-label="Week">$645,180</td><td class="num" data-label="MTD">$922,400</td><td class="num" data-label="YTD">$11,880,500</td><td class="num neg" data-label="YoY">−19.4%</td></tr>
+          <tr><th>Amazon</th><td class="num" data-label="Week">$484,900</td><td class="num" data-label="MTD">$693,100</td><td class="num" data-label="YTD">$8,942,300</td><td class="num pos" data-label="YoY">+164.2%</td></tr>
+          <tr><th>Walmart</th><td class="num" data-label="Week">$4,680</td><td class="num" data-label="MTD">$7,100</td><td class="num" data-label="YTD">$879,900</td><td class="num" data-label="YoY">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><span class="marker">Note.</span> Walmart has no prior-year comparison — not
+    selling in the comparison window. eBay reads <em>n/a</em> for YoY: the prior-year window catches
+    the channel mid-ramp, so the ratio would overstate. Read the trend instead. Not active: Best Buy,
+    Target+, Temu, TikTok.</p>
+  </section>
+
+  <!-- 05 -->
+  <section class="slide">
+    <div class="slide-no"><span>The constraint on the quarter</span><span>05</span></div>
+    <h2>Inventory Health</h2>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Metric</th><th>Week</th><th>MTD</th><th>YTD</th></tr></thead>
+        <tbody>
+          <tr><th>Inventory available</th><td class="num" data-label="Week">3,140</td><td class="num" data-label="MTD">3,090</td><td class="num" data-label="YTD">3,090</td></tr>
+          <tr><th>In-stock rate</th><td class="num" data-label="Week">41.7%</td><td class="num" data-label="MTD">38.9%</td><td class="num" data-label="YTD">38.9%</td></tr>
+          <tr><th>Stagnant inventory</th><td class="num" data-label="Week">39.2%</td><td class="num" data-label="MTD">39.2%</td><td class="num" data-label="YTD">39.2%</td></tr>
+          <tr><th>Non-movers (SKUs)</th><td class="num" data-label="Week">52.8%</td><td class="num" data-label="MTD">57.4%</td><td class="num" data-label="YTD">57.4%</td></tr>
+          <tr><th>Days of supply</th><td class="num" data-label="Week">5</td><td class="num" data-label="MTD">5</td><td class="num" data-label="YTD">5</td></tr>
+          <tr><th>Est. lost revenue (28d)<span class="c">‡</span></th><td class="num" data-label="Week">$7,412,600</td><td class="num" data-label="MTD">$5,908,300</td><td class="num" data-label="YTD">$5,908,300</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><span class="marker">‡</span> <strong>Corrected ×28.</strong> The velocity table
+    stores an average <em>daily</em> revenue figure under a column named for an N-day window; this
+    worksheet scales it back up. Accurate to roughly 2.6% against the core tables — directional, and
+    <strong>not reconciliation-grade</strong>.</p>
+  </section>
+
+  <!-- 06 -->
+  <section class="slide">
+    <div class="slide-no"><span>SKU concentration and capital at risk</span><span>06</span></div>
+    <h2>Top Movers &amp; Shakers</h2>
+    <p>With five days of cover the mover list is really a restock list. The slow tail has already been
+    worked down — stagnant cover fell 15.3% and non-movers 9.6% — so the risk has shifted from dead
+    stock to no stock.</p>
+
+    <div class="twoup">
+      <div>
+        <p class="subhead">Fastest sellers</p>
+        <div class="table-wrap scroll-x">
+          <table>
+            <thead><tr><th>Product</th><th>Units</th><th>Revenue</th><th>Cover</th></tr></thead>
+            <tbody>
+              <tr><th>iPhone 13, 128GB, Midnight</th><td class="num">298</td><td class="num">$47,200</td><td class="num">out</td></tr>
+              <tr><th>iPhone 16 Pro Max, 256GB</th><td class="num">58</td><td class="num">$43,900</td><td class="num">out</td></tr>
+              <tr><th>iPhone 12, 64GB, Blue</th><td class="num">214</td><td class="num">$31,400</td><td class="num">0.4d</td></tr>
+              <tr><th>Galaxy S24, 256GB</th><td class="num">71</td><td class="num">$24,600</td><td class="num">12d</td></tr>
+              <tr><th>Pixel 8, 128GB</th><td class="num">96</td><td class="num">$22,100</td><td class="num">out</td></tr>
+              <tr><th>iPhone 15, 128GB, Pink</th><td class="num">63</td><td class="num">$21,800</td><td class="num">out</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <p class="subhead">Slow movers</p>
+        <div class="table-wrap scroll-x">
+          <table>
+            <thead><tr><th>Product</th><th>On hand</th><th>28d</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><th>iPhone 16 Pro, 512GB</th><td class="num">68</td><td class="num">54</td><td class="num">$71,300</td></tr>
+              <tr><th>Pixel 9a, 128GB</th><td class="num">82</td><td class="num">3</td><td class="num">$28,700</td></tr>
+              <tr><th>Galaxy S25+, 256GB</th><td class="num">41</td><td class="num">2</td><td class="num">$23,400</td></tr>
+              <tr><th>iPhone 13, 128GB</th><td class="num">64</td><td class="num">4</td><td class="num">$15,900</td></tr>
+              <tr><th>Galaxy S22, 256GB</th><td class="num">33</td><td class="num">6</td><td class="num">$5,940</td></tr>
+              <tr><th>Pixel 10, 128GB</th><td class="num">39</td><td class="num">—</td><td class="num">$0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="note"><span class="marker">Note.</span> Trailing-7-day movers against a point-in-time
+    stock snapshot, 2026-08-06 to 2026-08-12 — <strong>not</strong> the Mon–Sun week used on every
+    other slide. Mover revenue is ×7-corrected. Slow movers are ranked by stock value (on-hand units
+    × 28-day average price), not by units.</p>
+  </section>
+
+  <!-- 07 -->
+  <section class="slide">
+    <div class="slide-no"><span>Coverage and competitiveness</span><span>07</span></div>
+    <h2>Listings &amp; Buy Box</h2>
+    <div class="twoup">
+      <div>
+        <p class="subhead">Rates</p>
+        <div class="table-wrap">
+          <table class="stack">
+            <tbody>
+              <tr><th>Featured offer win rate (Amazon)</th><td class="num" data-label="Rate">6.2%</td></tr>
+              <tr><th>Price competitive (Amazon)</th><td class="num" data-label="Rate">24.8%</td></tr>
+              <tr><th>A+ content, of covered GMV</th><td class="num" data-label="Rate">71.4%</td></tr>
+              <tr><th>Reviews ≥15 @ ≥3.5★, of covered GMV</th><td class="num" data-label="Rate">98.6%</td></tr>
+              <tr><th>Catalogue coverage of Amazon GMV</th><td class="num" data-label="Rate">100.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <p class="subhead">Active listings</p>
+        <div class="table-wrap">
+          <table class="stack">
+            <tbody>
+              <tr><th>Active listings</th><td class="num" data-label="YTD">2,840</td></tr>
+              <tr><th># of SKUs</th><td class="num" data-label="YTD">4,610</td></tr>
+              <tr><th>Content optimisations</th><td class="num" data-label="YTD">27,180</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="note"><span class="marker">Note.</span> Buy box and price-competitiveness are
+    Amazon-only. A+ and reviews are percentages of <strong>covered</strong> Amazon GMV, not of the
+    whole catalogue.</p>
+  </section>
+
+  <!-- 08 -->
+  <section class="slide">
+    <div class="slide-no"><span>Demand and promotional activity</span><span>08</span></div>
+    <h2>Traffic &amp; Promotions</h2>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Metric</th><th>Week</th><th>MTD</th><th>YTD</th><th>YoY</th></tr></thead>
+        <tbody>
+          <tr><th>Traffic</th><td class="num" data-label="Week">478,210</td><td class="num" data-label="MTD">661,400</td><td class="num" data-label="YTD">34,092,700</td><td class="num neg" data-label="YoY">−9.2%</td></tr>
+          <tr><th>Conversion rate</th><td class="num" data-label="Week">0.4%</td><td class="num" data-label="MTD">0.5%</td><td class="num" data-label="YTD">0.3%</td><td class="num" data-label="YoY">n/a</td></tr>
+          <tr><th># of promotions</th><td class="num" data-label="Week">2</td><td class="num" data-label="MTD">2</td><td class="num" data-label="YTD">11</td><td class="num" data-label="YoY">—</td></tr>
+          <tr><th>Promotion GMV</th><td class="num" data-label="Week">$51,240</td><td class="num" data-label="MTD">$79,300</td><td class="num" data-label="YTD">$6,288,800</td><td class="num" data-label="YoY">—</td></tr>
+          <tr><th>└ % of GMV on promo</th><td class="num" data-label="Week">2.8%</td><td class="num" data-label="MTD">3.0%</td><td class="num" data-label="YTD">12.0%</td><td class="num" data-label="YoY">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Traffic 478,210 (+15.3%) with conversion at 0.4%, up 22.6% on the week. Two promotions ran in
+    the window, contributing $51,240 — 2.8% of weekly GMV. Year to date, 11 promos have driven
+    $6,288,800, or 12.0% of all GMV, so promotions are a material and working lever on this account.</p>
+    <p class="note"><span class="marker">Note.</span> Promoted GMV counts each order line once. Read
+    promotion GMV against "% of GMV on promo" — it covers only promos the lift table can measure. A
+    blank week or MTD means no promotion was running, <strong>not</strong> missing data.</p>
+  </section>
+
+  <!-- 09 -->
+  <section class="slide">
+    <div class="slide-no"><span>Marketplace standing</span><span>09</span></div>
+    <h2>Account Health</h2>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Metric</th><th>Week</th><th>MTD</th><th>YTD</th></tr></thead>
+        <tbody>
+          <tr><th>Order defect rate</th><td class="num" data-label="Week">0.5%</td><td class="num" data-label="MTD">0.5%</td><td class="num" data-label="YTD">0.5%</td></tr>
+          <tr><th>Late shipment rate</th><td class="num" data-label="Week">1.8%</td><td class="num" data-label="MTD">3.1%</td><td class="num" data-label="YTD">3.1%</td></tr>
+          <tr><th>Claims</th><td class="num" data-label="Week">0.4%</td><td class="num" data-label="MTD">0.4%</td><td class="num" data-label="YTD">0.4%</td></tr>
+          <tr><th>Seller health score</th><td class="num" data-label="Week">496</td><td class="num" data-label="MTD">501</td><td class="num" data-label="YTD">501</td></tr>
+          <tr><th>Open tickets</th><td class="num" data-label="Week">1,840</td><td class="num" data-label="MTD">2,710</td><td class="num" data-label="YTD">44,900</td></tr>
+          <tr><th>Completed tickets</th><td class="num" data-label="Week">3,520</td><td class="num" data-label="MTD">5,180</td><td class="num" data-label="YTD">47,300</td></tr>
+          <tr><th>Issues created / completed</th><td class="num" data-label="Week">4 / 4</td><td class="num" data-label="MTD">8 / 4</td><td class="num" data-label="YTD">88 / 61</td></tr>
+          <tr><th>Tasks created / completed</th><td class="num" data-label="Week">15 / 15</td><td class="num" data-label="MTD">21 / 24</td><td class="num" data-label="YTD">372 / 368</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><span class="marker">Note.</span> One marketplace returns account-health rates in
+    percent units while the others return ratios; the worksheet normalises. The blended figures are
+    <strong>not</strong> weighted by channel volume. Issue- and task-tracker prior-year columns are
+    blank by design — neither tool was used on this account in 2025, so a year-on-year would report
+    tooling adoption rather than performance.</p>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <div class="slide-no"><span>Issue tracker · task tracker · action-item tracker</span><span>10</span></div>
+    <h2>Work In Flight</h2>
+    <ul class="items">
+      <li><span class="ref">OPS-412</span> · SKU mismatches · <span class="who">Unassigned · Urgent · in review</span>
+        <span class="gloss">Urgent. Mismatched SKUs feed both the overselling and the gap-filling work below.</span></li>
+      <li><span class="ref">TASK</span> · Daily gap analysis · <span class="who">M. Alvarez · Overdue (5 Aug)</span></li>
+      <li><span class="ref">OPS-538</span> · Overselling on 3 SKUs — identify cause · <span class="who">T. Whitfield · In progress</span>
+        <span class="gloss">Directly relevant at five days of cover: overselling is the failure mode when the buffer is gone.</span></li>
+      <li><span class="ref">OPS-604</span> · Limit order splitting so accessory orders are not split · <span class="who">Unassigned · Planned</span>
+        <span class="gloss">Part of the accessories programme.</span></li>
+      <li><span class="ref">TASK</span> · Accessories — FBA inventory recommendations · <span class="who">J. Okafor · Due 17 Aug</span>
+        <span class="gloss">New customer project. The accessories programme is the account's next expansion.</span></li>
+      <li><span class="ref">INT-118 … INT-122</span> · Validate Orders, Shipments, Inventory, Returns and Pricing endpoints · <span class="who">R. Lindqvist · Backlog</span></li>
+      <li><span class="ref">TASK</span> · All-marketplaces price health review · <span class="who">D. Osei · Due 13 Aug</span>
+        <span class="gloss">The lever on a 6.2% featured-offer win rate.</span></li>
+      <li><span class="ref">TASK</span> · Fast / slow mover review · <span class="who">K. Barnes · Due 17 Aug</span></li>
+    </ul>
+    <p class="note"><span class="marker">Coverage.</span> Sources: shared action-item tracker (34
+    rows), issue tracker via operator-scoped fetch (79 issues — the service-account path sees one team
+    of 38 and would have returned 19), task tracker (412 tasks in scope; 15 closed, 15 opened in the
+    week), support system (1,840 opened, 3,520 closed). <strong>Email — source not checked</strong>
+    (out of scope by decision, 2026-08-04). Returns feed from one channel stopped landing on
+    2026-03-22, so units returned understates the account and its year-on-year is not comparable.</p>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide">
+    <div class="slide-no"><span>Closed in the last 14 days</span><span>11</span></div>
+    <h2>Completed This Week</h2>
+    <div class="table-wrap scroll-x">
+      <table>
+        <thead><tr><th>Ref</th><th>Item</th><th>Owner</th><th>Closed</th></tr></thead>
+        <tbody>
+          <tr><th class="num">OPS-390</th><td style="text-align:left">Enable order allocator</td><td style="text-align:left">R. Lindqvist</td><td class="num">2026-08-05</td></tr>
+          <tr><th class="num">OPS-601</th><td style="text-align:left">Send test order</td><td style="text-align:left">A. Renner</td><td class="num">2026-08-05</td></tr>
+          <tr><th class="num">SUP-244</th><td style="text-align:left">Two marketplace orders missing from the client system</td><td style="text-align:left">L. Castellanos</td><td class="num">2026-08-06</td></tr>
+          <tr><th class="num">OPS-588</th><td style="text-align:left">Missing return requests</td><td style="text-align:left">A. Renner</td><td class="num">2026-08-06</td></tr>
+          <tr><th class="num">TASK</th><td style="text-align:left">Gateway errors, 6 Aug batch</td><td style="text-align:left">C. Duarte</td><td class="num">2026-08-06</td></tr>
+          <tr><th class="num">TASK</th><td style="text-align:left">Marketplace pricing request</td><td style="text-align:left">D. Osei</td><td class="num">2026-08-10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide">
+    <div class="slide-no"><span>Where leadership is needed</span><span>12</span></div>
+    <h2>Asks &amp; Decisions</h2>
+    <ol class="asks">
+      <li>Restocking is the decision this week. Five days of supply on a +58% week is not sustainable, and it caps the upside — the demand is not what's capping it.</li>
+      <li>Own the buy box problem: a 6.2% featured-offer win rate against 24.8% price-competitiveness says this is pricing, not availability alone.</li>
+      <li>Confirm the window on the $18.5M devices target (due 30 Sept) — YTD is $52.41M, so it reads as second-half or devices-only.</li>
+      <li>The accessories programme needs a decision path: five endpoint validations sit in backlog behind an OMS instance marked cancelled, and FBA inventory recommendations are due 17 Aug.</li>
+    </ol>
+
+    <p class="subhead" style="margin-top:2rem">Blocked</p>
+    <ul class="bullets">
+      <li><strong>OMS instance for accessories</strong> — marked cancelled on the customer project. Needs a decision: the five endpoint validations behind it are all still in backlog.</li>
+      <li><strong>Five days of supply</strong> — not a ticket. At +58.4% GMV growth and 41.7% in-stock, replenishment is the binding constraint on next week's number.</li>
+    </ul>
+  </section>
+
+  <p style="margin-top:3rem"><a href="../">← Back to the case study</a></p>
+
+</main>
+
+<footer class="site-foot">
+  <span>Synthetic sample · no real data</span>
+  <span><a href="/work/">Selected work</a></span>
+</footer>
+
+</div>
+</body>
+</html>

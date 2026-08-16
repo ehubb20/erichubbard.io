@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /work/wbr-exec-brief/deck/
+
+Sitemap: https://erichubbard.io/sitemap.xml

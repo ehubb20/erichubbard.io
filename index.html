@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eric Hubbard — Business Intelligence</title>
+<meta name="description" content="Eric Hubbard is a business intelligence lead in North Idaho who builds agent-automated analytics systems. Case studies in automated reporting, connector architecture, and returns analysis.">
+<link rel="canonical" href="https://erichubbard.io/">
+<meta property="og:title" content="Eric Hubbard — Business Intelligence">
+<meta property="og:description" content="BI lead building agent-automated analytics systems. Case studies in automated reporting, connector architecture, and returns analysis.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://erichubbard.io/">
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <a class="wordmark" href="/">Eric Hubbard</a>
+  <nav>
+    <a href="/" aria-current="page">About</a>
+    <a href="/work/">Work</a>
+  </nav>
+</header>
+
+<main>
+
+  <div class="intro">
+    <!-- Replace with assets/eric.jpg — square, ~400×400, plain background. -->
+    <div class="photo-placeholder">photo<br>goes here</div>
+    <div>
+      <p class="eyebrow">Business intelligence · North Idaho</p>
+      <h1>I build analytics systems that hold up when someone argues with them.</h1>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="lede">Ten years in business intelligence, currently leading a team of three engineers
+    building the analytics behind pricing and revenue optimization for e-commerce clients. SQL,
+    Python, BigQuery, dbt, and the BI layer on top of them.</p>
+
+    <p>For the last two years I have been building agent-automated systems on top of that stack —
+    not chat wrappers, but packaged, versioned tooling that other people on the team run
+    themselves: a weekly business review deck that assembles itself from five sources, a connector
+    layer that gives every marketplace API one shape, analyses that ship with their own caveats
+    documented in the file header.</p>
+
+    <p>The thing I care about is <strong>defensibility</strong>. An automated report that quietly
+    reports a wrong number is worse than no report, because it gets believed. Most of my work on
+    these systems has gone into making them fail closed, distinguish a missing source from a
+    negative finding, and say plainly what they could not measure.
+    <a href="/work/">Three worked examples →</a></p>
+  </div>
+
+  <hr class="rule">
+
+  <h2>Experience</h2>
+  <div class="roles">
+
+    <div class="role">
+      <span class="title">Lead Business Intelligence Engineer</span>
+      <span class="when">2025 — present</span>
+      <span class="org">Gierd — Sandpoint, ID. Lead three BI/data engineers on pricing and
+      revenue-optimization analytics. Own the BI platform and the SQL models beneath it across
+      BigQuery and dbt. Build the agent tooling the team runs.</span>
+    </div>
+
+    <div class="role">
+      <span class="title">Analytics Engineer → Manager, Data R&amp;D</span>
+      <span class="when">2023 — 2025</span>
+      <span class="org">John Burns Research and Consulting — Hayden, ID. Built LLM agent pipelines
+      and AI automation for internal business units. Led market-fundamentals analysis and
+      forecasting frameworks for institutional real-estate clients; mentored an analyst.</span>
+    </div>
+
+    <div class="role">
+      <span class="title">Manager, Decision Sciences</span>
+      <span class="when">2022 — 2023</span>
+      <span class="org">UM Worldwide — Hayden, ID. Managed a team measuring cross-channel campaign
+      effectiveness for Fortune 500 clients.</span>
+    </div>
+
+    <div class="role">
+      <span class="title">Manager, Measurement &amp; Insights → Senior Data Analyst</span>
+      <span class="when">2015 — 2022</span>
+      <span class="org">Effectv — Spokane, WA and Sacramento, CA. Audience segmentation and
+      marketplace analysis at scale; built the reporting that regional media planning ran on.</span>
+    </div>
+
+  </div>
+
+  <h2>Tools</h2>
+  <p class="skills">
+    SQL · Python · BigQuery · dbt · Snowflake · Metabase · Looker · Power BI · Tableau ·
+    Kestra · Airbyte · data modeling · ETL and pipeline design · agent tooling and Claude Code
+    skills · Model Context Protocol servers
+  </p>
+
+  <h2>Education</h2>
+  <p class="col">B.S. Economics, Oregon State University.</p>
+
+  <hr class="rule">
+
+  <h2>Contact</h2>
+  <div class="contact">
+    <span id="email">ehubb20 at gmail dot com</span>
+    <a href="https://www.linkedin.com/in/eric-hubbard-53500838">LinkedIn</a>
+    <a href="/assets/eric-hubbard-resume.pdf">Résumé (PDF)</a>
+  </div>
+
+</main>
+
+<footer class="site-foot">
+  <span>Eric Hubbard · North Idaho</span>
+  <span><a href="/work/">Selected work</a></span>
+</footer>
+
+</div>
+
+<script>
+// Light obfuscation: the address is readable without JS, clickable with it.
+(function () {
+  var el = document.getElementById('email');
+  if (!el) return;
+  var user = 'ehubb20', host = 'gmail' + '.' + 'com';
+  var a = document.createElement('a');
+  a.href = 'mail' + 'to:' + user + '@' + host;
+  a.textContent = user + '@' + host;
+  el.replaceWith(a);
+})();
+</script>
+
+</body>
+</html>
