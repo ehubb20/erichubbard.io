@@ -57,90 +57,119 @@
   <!-- 2 -->
   <article class="entry">
     <p class="status">Architecture · 2026</p>
-    <h2>Three layers for eight marketplace APIs</h2>
+    <h2>Three layers, and where the second one leaked</h2>
     <div class="col">
-      <p>Customer service operations touched eight external systems, each with its own auth model —
-      two-layer token exchange with request signing on one, OAuth refresh on another, stateless
-      basic auth on a third. Every new automation re-solved the same problems, and business logic
-      kept getting welded to whichever API it happened to start from.</p>
-      <p>The fix was a strict three-layer split. <strong>Connectors</strong> know one API each and
-      contain no business logic — they expose what the API can do, output JSON, and compose.
-      <strong>Jobs</strong> orchestrate connectors to accomplish exactly one business outcome, end
-      to end, independently. <strong>Pipelines</strong> chain jobs into multi-step workflows.</p>
-      <p>The third layer does not exist yet, and the documentation says so in those words. Naming
-      the empty layer is what stops the next person quietly implementing it inside a job — which is
-      how the original tangle formed.</p>
+      <p>Customer service operations touched eight external systems, each a different auth problem —
+      Amazon needs a token exchange <em>plus</em> request signing on every call, eBay is an OAuth
+      refresh flow, Walmart is a client-credentials grant with three mandatory headers, the support
+      desk is stateless basic auth. Every new automation re-solved all of it, and business logic kept
+      getting welded to whichever API it happened to start from.</p>
+
+      <p>I split it three ways. <strong>Connectors</strong> know one API each and hold no business
+      logic. <strong>Jobs</strong> orchestrate connectors to accomplish one outcome, end to end,
+      alone. <strong>Pipelines</strong> chain jobs. Eight connectors got built on shared conventions:
+      credentials from the environment, a checked-in reference of every implemented endpoint with its
+      rate limits, a CLI wrapper, a full method reference.</p>
+
+      <p>Then it eroded, and where it eroded is the interesting part. Three jobs now run on a
+      schedule, but only one of them lives in the jobs layer. The other two grew <em>inside the
+      connector directory</em>, and one imports its warehouse and spreadsheet SDKs directly —
+      reaching straight past the layer that exists to prevent exactly that. Both of those jobs need a
+      warehouse connector and a spreadsheet connector. Neither exists. <strong>The missing
+      abstraction is what caused the violation</strong>, and the path of least resistance did the
+      rest.</p>
+
+      <p>So the third layer is not unbuilt for want of time. You cannot chain jobs into pipelines
+      when two of your three jobs are not jobs — they are scripts with schedules, producing a side
+      effect and an exit code, with nothing to hand to a next step.</p>
+
+      <p>The fix is four things in dependency order: write the two missing connectors; relocate the
+      two stray jobs and repoint their imports; change the job contract so each one exports a
+      function returning a structured result, with the entry point reduced to a thin CLI wrapper; add
+      a CI check that fails when anything in the connector directory imports outside itself. Only the
+      third of those is real work, and pipelines become a couple of afternoons afterwards.</p>
+
+      <p>What I take from it: <strong>naming an empty layer in a README is not enforcement.</strong>
+      The documentation was clear and it drifted anyway, in the one place the abstraction was
+      missing. Architecture holds when the contract makes the wrong thing hard, not when the prose
+      says not to do it.</p>
     </div>
 
     <figure>
       <div class="fig-scroll">
-      <svg viewBox="0 0 900 470" role="img" aria-labelledby="archtitle archdesc" style="max-width:900px">
-        <title id="archtitle">Three-layer connector architecture</title>
-        <desc id="archdesc">Layer one holds eight single-purpose API connectors. Layer two holds jobs that orchestrate them, of which one is built. Layer three, pipelines, is drawn dashed because it has not been built.</desc>
-        <g fill="none" stroke="currentColor" opacity="0.16">
-          <line x1="0" y1="196" x2="900" y2="196" stroke-width="1"/>
-          <line x1="0" y1="322" x2="900" y2="322" stroke-width="1"/>
-        </g>
+      <svg viewBox="0 0 900 530" role="img" aria-labelledby="archtitle archdesc" style="max-width:900px">
+        <title id="archtitle">Three-layer architecture, as it actually stands</title>
+        <desc id="archdesc">Layer one holds eight single-purpose API connectors, but also holds two scheduled jobs that do not belong there; one of them bypasses the connector layer entirely and imports its warehouse and spreadsheet SDKs directly. Layer two holds only one of the three jobs. Layer three, pipelines, is blocked because two of the three jobs are entry-point scripts with no return value to chain.</desc>
 
-        <!-- layer 1 -->
-        <text x="0" y="18" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 1 — CONNECTORS · one API each, no business logic</text>
-        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="currentColor">
+        <!-- LAYER 1 -->
+        <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 1 — CONNECTORS · one API each, no business logic</text>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
           <g stroke="currentColor" stroke-opacity="0.35" fill="none">
-            <rect x="0"   y="34" width="210" height="46" rx="2"/>
-            <rect x="230" y="34" width="210" height="46" rx="2"/>
-            <rect x="460" y="34" width="210" height="46" rx="2"/>
-            <rect x="690" y="34" width="210" height="46" rx="2"/>
-            <rect x="0"   y="96" width="210" height="46" rx="2"/>
-            <rect x="230" y="96" width="210" height="46" rx="2"/>
-            <rect x="460" y="96" width="210" height="46" rx="2"/>
-            <rect x="690" y="96" width="210" height="46" rx="2"/>
+            <rect x="0"   y="24" width="204" height="44" rx="2"/>
+            <rect x="232" y="24" width="204" height="44" rx="2"/>
+            <rect x="464" y="24" width="204" height="44" rx="2"/>
+            <rect x="696" y="24" width="204" height="44" rx="2"/>
+            <rect x="0"   y="80" width="204" height="44" rx="2"/>
+            <rect x="232" y="80" width="204" height="44" rx="2"/>
+            <rect x="464" y="80" width="204" height="44" rx="2"/>
+            <rect x="696" y="80" width="204" height="44" rx="2"/>
           </g>
-          <text x="16"  y="63">Amazon</text>
-          <text x="246" y="63">eBay</text>
-          <text x="476" y="63">Walmart</text>
-          <text x="706" y="63">Zendesk</text>
-          <text x="16"  y="125">Order management</text>
-          <text x="246" y="125">Carriers</text>
-          <text x="476" y="125">Datastore</text>
-          <text x="706" y="125">Pricing data</text>
+          <text x="15"  y="51">Amazon</text>
+          <text x="247" y="51">eBay</text>
+          <text x="479" y="51">Walmart</text>
+          <text x="711" y="51">Support desk</text>
+          <text x="15"  y="107">Order management</text>
+          <text x="247" y="107">Carriers</text>
+          <text x="479" y="107">Datastore</text>
+          <text x="711" y="107">Pricing data</text>
         </g>
 
-        <!-- arrow -->
-        <g stroke="currentColor" stroke-opacity="0.4" fill="none">
-          <line x1="450" y1="152" x2="450" y2="184" stroke-width="1.5"/>
-          <path d="M445 178 L450 186 L455 178" stroke-width="1.5"/>
-        </g>
-
-        <!-- layer 2 -->
-        <text x="0" y="222" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 2 — JOBS · one business outcome each, runs end to end alone</text>
-        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="currentColor">
-          <rect x="0" y="238" width="290" height="52" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.5"/>
-          <text x="16" y="262">returns-delivered</text>
-          <text x="16" y="280" font-size="11.5" opacity="0.6">tracks returns → writes delivery dates back</text>
-
-          <g stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 4" fill="none">
-            <rect x="310" y="238" width="290" height="52" rx="2"/>
-            <rect x="620" y="238" width="280" height="52" rx="2"/>
+        <!-- the two strays, drawn inside layer 1 because that is where they live -->
+        <text x="0" y="152" font-family="ui-monospace, Menlo, monospace" font-size="10.5" letter-spacing="1.4" fill="currentColor" opacity="0.75">…AND TWO SCHEDULED JOBS THAT LIVE HERE ANYWAY</text>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
+          <g stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" fill="currentColor" fill-opacity="0.05">
+            <rect x="0"   y="164" width="270" height="44" rx="2"/>
+            <rect x="292" y="164" width="270" height="44" rx="2"/>
           </g>
-          <text x="326" y="269" font-size="12.5" opacity="0.45">further jobs</text>
-          <text x="636" y="269" font-size="12.5" opacity="0.45">further jobs</text>
+          <text x="15"  y="191">order-auditing</text>
+          <text x="307" y="191">stalled-shipments</text>
         </g>
 
-        <!-- arrow -->
-        <g stroke="currentColor" stroke-opacity="0.25" fill="none" stroke-dasharray="4 4">
-          <line x1="450" y1="300" x2="450" y2="310" stroke-width="1.5"/>
+        <!-- bypass: routed under the strays so it doesn't cross them -->
+        <g stroke="currentColor" stroke-opacity="0.55" fill="none">
+          <path d="M135 208 L135 224 L636 224" stroke-width="1.4" stroke-dasharray="5 3"/>
+          <path d="M628 219 L637 224 L628 229" stroke-width="1.4"/>
+        </g>
+        <text x="646" y="220" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.75">bypasses layer 1 —</text>
+        <text x="646" y="236" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.75">imports its SDKs directly</text>
+
+        <line x1="0" y1="262" x2="900" y2="262" stroke="currentColor" stroke-opacity="0.16"/>
+
+        <!-- LAYER 2 -->
+        <text x="0" y="288" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 2 — JOBS · one business outcome each, runs end to end alone</text>
+        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
+          <rect x="0" y="302" width="290" height="52" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.5"/>
+          <text x="15" y="326">returns-delivered</text>
+          <text x="15" y="344" font-size="11.5" opacity="0.6">the only job in the right place</text>
+
+          <rect x="312" y="302" width="588" height="52" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"/>
+          <text x="327" y="333" font-size="12.5" opacity="0.5">where the other two belong</text>
         </g>
 
-        <!-- layer 3 -->
-        <text x="0" y="348" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 3 — PIPELINES · chains jobs into end-to-end processes</text>
-        <rect x="0" y="364" width="900" height="76" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
-        <text x="24" y="398" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="currentColor" opacity="0.75">Not built yet.</text>
-        <text x="24" y="420" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.55">Named in the documentation so the next person builds it here, and not inside a job.</text>
+        <line x1="0" y1="378" x2="900" y2="378" stroke="currentColor" stroke-opacity="0.16"/>
+
+        <!-- LAYER 3 -->
+        <text x="0" y="404" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 3 — PIPELINES · chains jobs into end-to-end processes</text>
+        <rect x="0" y="418" width="900" height="94" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
+        <text x="20" y="450" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="currentColor" opacity="0.8">Blocked — and not by time.</text>
+        <text x="20" y="473" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.6">A pipeline has to call a job and receive a result. Two of the three are entry-point scripts</text>
+        <text x="20" y="492" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.6">that produce a side effect and an exit code — there is nothing to hand to a next step.</text>
       </svg>
       </div>
-      <figcaption>The architecture as documented. Layer 3 is drawn dashed because it does not exist —
-      an honest diagram of a system in progress is more useful than an aspirational one, and it is
-      the fastest way to tell a new contributor where their code belongs.</figcaption>
+      <figcaption>The system as it actually stands, not as the README describes it. Two of the three
+      scheduled jobs sit in the connector layer, and one reaches past it entirely — which is why the
+      pipeline layer has nothing to chain. Drawing the real state is the fastest way to show a new
+      contributor both where their code belongs and where the existing code doesn't.</figcaption>
     </figure>
   </article>
 
