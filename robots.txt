@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /work/wbr-exec-brief/deck/
+Disallow: /HANDOFF.md
+Disallow: /README.md
 
 Sitemap: https://erichubbard.io/sitemap.xml
