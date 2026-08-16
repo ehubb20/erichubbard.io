@@ -37,6 +37,7 @@
     <div><dt>Built</dt><dd>Mid 2026, still in weekly use</dd></div>
     <div><dt>Shape</dt><dd>Claude Code skill — 12 scripts, per-account JSON config, own SQL</dd></div>
     <div><dt>Sources</dt><dd>Warehouse worksheet, Linear, Asana, Zendesk, a shared customer tracker</dd></div>
+    <div><dt>Scale</dt><dd>17 accounts, one config file each</dd></div>
     <div><dt>Run by</dt><dd>Account owners, not me</dd></div>
   </dl>
 
@@ -87,8 +88,9 @@
   the deck.</p>
 
   <p>Two structural decisions did most of the work. <strong>Adding an account is a config file, not
-  code</strong> — five are configured, and the sixth took an afternoon of writing JSON rather than
-  a branch. And <strong>the deck is the only deliverable.</strong> An earlier version also drafted
+  code</strong> — the first few were the hard part, and every account since has been an afternoon of
+  writing JSON rather than a branch, which is how the same pipeline now covers seventeen of them.
+  And <strong>the deck is the only deliverable.</strong> An earlier version also drafted
   a summary email; that went out of scope on 2026-08-04, because reading the group archive needed
   the pipeline's only domain-admin dependency and the shared tracker already curated the threads
   that mattered. The email scripts are still in the repo, unwired, with the decision and its
@@ -167,7 +169,7 @@
 
   <h2>Where it landed</h2>
 
-  <p>Five accounts configured; a weekly deck that takes minutes rather than hours; a first-run
+  <p>Seventeen accounts configured; a weekly deck that takes minutes rather than hours; a first-run
   preflight check so a new operator on a new machine resolves their own access problems before they
   produce a wrong deck instead of after.</p>
 
