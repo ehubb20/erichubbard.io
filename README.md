@@ -28,14 +28,28 @@ python3 tools/make_charts.py    # rewrites the <!-- CHART:name --> blocks in pla
 It needs no dependencies. Every mark is `currentColor` at some opacity, so the
 charts follow the page theme instead of carrying a palette of their own.
 
+`tools/make_resume_pdf.py` typesets the scrubbed `.docx` into `assets/eric-hubbard-resume.pdf`.
+It is the one thing here with a dependency, kept out of the site entirely:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install reportlab
+.venv/bin/python tools/make_resume_pdf.py
+```
+
+It refuses to run if it finds a phone number in the `.docx`, warns if the output
+spills past two pages, and uses only the base-14 PDF fonts so nothing is embedded
+(the file is ~8 KB).
+
 ## Before launch
 
 - [ ] `assets/eric.jpg` — square, ~400×400, plain background. Then in `index.html`
       replace the `.photo-placeholder` div with
       `<img src="/assets/eric.jpg" alt="Eric Hubbard">`.
-- [ ] `assets/eric-hubbard-resume.pdf` — **scrubbed copy**: phone number removed,
-      location softened to "North Idaho". Do not upload the working résumé.
 - [ ] Register `erichubbard.io`.
+
+The résumé PDF is already generated and scrubbed — phone removed, location softened
+to "North Idaho". `assets/eric-hubbard-resume-scrubbed.docx` is the source of truth;
+edit it and re-run the generator (below) rather than editing the PDF.
 
 ## Deploying to Cloudflare Pages
 
