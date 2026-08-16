@@ -9,12 +9,24 @@ work/wbr-exec-brief/index.html      Case study (complete)
 work/wbr-exec-brief/deck/           Synthetic sample deck + preview.svg
 style.css                           Everything
 assets/                             Photo + résumé PDF
+tools/make_charts.py                One-off chart generator (see below)
 ```
 
 ## Editing
 
 Open the file, edit the HTML, commit. There is nothing to install and nothing to run.
 Colours, type scale and spacing are all tokens at the top of `style.css`.
+
+The four charts in the sample deck are finished SVG committed into the HTML — the
+site does not generate anything at load or deploy time. `tools/make_charts.py`
+wrote them, and is kept only so the synthetic series can be changed later:
+
+```bash
+python3 tools/make_charts.py    # rewrites the <!-- CHART:name --> blocks in place
+```
+
+It needs no dependencies. Every mark is `currentColor` at some opacity, so the
+charts follow the page theme instead of carrying a palette of their own.
 
 ## Before launch
 
