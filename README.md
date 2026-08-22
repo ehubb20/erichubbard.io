@@ -4,7 +4,7 @@ Two-page portfolio site. Static HTML, one stylesheet, no build step, no dependen
 
 ```
 index.html                          About / résumé
-work/index.html                     Work index — 3 entries
+work/index.html                     Work index, 3 entries
 work/wbr-exec-brief/index.html      Case study (complete)
 work/wbr-exec-brief/deck/           Synthetic sample deck + preview.svg
 style.css                           Everything
@@ -17,7 +17,7 @@ tools/make_charts.py                One-off chart generator (see below)
 Open the file, edit the HTML, commit. There is nothing to install and nothing to run.
 Colours, type scale and spacing are all tokens at the top of `style.css`.
 
-The four charts in the sample deck are finished SVG committed into the HTML — the
+The four charts in the sample deck are finished SVG committed into the HTML. The
 site does not generate anything at load or deploy time. `tools/make_charts.py`
 wrote them, and is kept only so the synthetic series can be changed later:
 
@@ -42,12 +42,12 @@ spills past two pages, and uses only the base-14 PDF fonts so nothing is embedde
 
 ## Before launch
 
-- [ ] `assets/eric.jpg` — square, ~400×400, plain background. Then in `index.html`
+- [ ] `assets/eric.jpg`: square, ~400×400, plain background. Then in `index.html`
       replace the `.photo-placeholder` div with
       `<img src="/assets/eric.jpg" alt="Eric Hubbard">`.
 - [ ] Register `erichubbard.io`.
 
-The résumé PDF is already generated and scrubbed — phone removed, location softened
+The résumé PDF is already generated and scrubbed: phone removed, location softened
 to "North Idaho". `assets/eric-hubbard-resume-scrubbed.docx` is the source of truth;
 edit it and re-run the generator (below) rather than editing the PDF.
 
@@ -67,7 +67,7 @@ edit it and re-run the generator (below) rather than editing the PDF.
   hostnames or schema names anywhere under `work/`.** Employers appear only in the
   experience section on the home page.
 - Every figure in `work/` is synthetic and labelled as such.
-- The deck sample carries `noindex` — it should be read via the case study, not
+- The deck sample carries `noindex`, so it should be read via the case study, not
   found cold in search results.
 - No external requests: no CDN fonts, no analytics scripts beyond Cloudflare's,
   no embeds. Keeps the site fast and dependency-free.

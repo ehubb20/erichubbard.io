@@ -189,7 +189,7 @@ def chart_inventory():
     p.append(week_axis(x0, pw, len(IN_STOCK), H - 22))
     p.append(week_axis(x0 + pw + gap + 16, pw, len(DAYS_SUPPLY), H - 22))
     p.append(axis_label(x0, H - 6,
-                        "Cover has fallen every week for eight weeks while in-stock rose — restock is not keeping pace with sell-through.",
+                        "Cover has fallen every week for eight weeks while in-stock rose, so restock is not keeping pace with sell-through.",
                         anchor="start", size=9, op=0.45))
     return frame("Inventory health, 13 weeks", "".join(p), H)
 

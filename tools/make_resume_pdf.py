@@ -122,7 +122,7 @@ def build(blocks, out):
     st = styles()
     doc = BaseDocTemplate(str(out), pagesize=LETTER,
                           leftMargin=54, rightMargin=54, topMargin=48, bottomMargin=40,
-                          title="Eric Hubbard — Résumé", author="Eric Hubbard",
+                          title="Eric Hubbard · Résumé", author="Eric Hubbard",
                           subject="Business intelligence", creator="erichubbard.io")
     frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="body",
                   leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
@@ -175,7 +175,7 @@ def build(blocks, out):
                 if k == "org":
                     group.append(Paragraph(t, st["org"]))
                 elif k == "bullet":
-                    group.append(Paragraph(t, st["bullet"], bulletText="—"))
+                    group.append(Paragraph(t, st["bullet"], bulletText="•"))
                 else:
                     break
                 consumed.add(j)
@@ -183,7 +183,7 @@ def build(blocks, out):
         elif kind == "org":
             flow.append(Paragraph(esc, st["org"]))
         elif kind == "bullet":
-            flow.append(Paragraph(esc, st["bullet"], bulletText="—"))
+            flow.append(Paragraph(esc, st["bullet"], bulletText="•"))
         else:
             flow.append(Paragraph(esc, st["body"]))
 
