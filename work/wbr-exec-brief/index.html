@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The weekly business review that builds itself — Eric Hubbard</title>
-<meta name="description" content="Case study: an agent-run pipeline that assembles a weekly marketplace business review from five sources, and the judgment calls that keep its numbers defensible.">
+<meta name="description" content="Case study: an agent-run pipeline that assembles a weekly marketplace business review from five sources — its architecture, its four validation layers, and the judgment calls that keep its numbers defensible.">
 <link rel="canonical" href="https://erichubbard.io/work/wbr-exec-brief/">
 <meta property="og:title" content="The weekly business review that builds itself">
-<meta property="og:description" content="An agent-run pipeline that assembles a weekly marketplace business review from five sources — and the judgment calls that keep its numbers defensible.">
+<meta property="og:description" content="An agent-run pipeline that assembles a weekly marketplace business review from five sources — its architecture, and the judgment calls that keep its numbers defensible.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://erichubbard.io/work/wbr-exec-brief/">
 <link rel="stylesheet" href="/style.css">
@@ -89,13 +89,221 @@
 
   <p>Two structural decisions did most of the work. <strong>Adding an account is a config file, not
   code</strong> — the first few were the hard part, and every account since has been an afternoon of
-  writing JSON rather than a branch, which is how the same pipeline now covers seventeen of them.
+  writing JSON rather than a branch, which is how one pipeline now carries seventeen account
+  configurations.
   And <strong>the deck is the only deliverable.</strong> An earlier version also drafted
   a summary email; that went out of scope on 2026-08-04, because reading the group archive needed
   the pipeline's only domain-admin dependency and the shared tracker already curated the threads
   that mattered. The email scripts are still in the repo, unwired, with the decision and its
   reasoning recorded in the skill file — so if the constraint changes, the next person finds the
   path rather than rediscovering it.</p>
+
+  <h2>How it is put together</h2>
+
+  <p>It is more useful to describe the run as a chain of artifacts than as a list of scripts,
+  because knowing which artifact you are looking at determines what a fix even <em>means</em>. The
+  same wrong number is a SQL edit at one stage, a refresh at the next, and a re-render at the
+  third, and the fastest way to waste an afternoon is to fix it at the wrong one.</p>
+
+  <figure>
+    <div class="fig-scroll">
+      <svg viewBox="0 0 900 372" role="img" aria-labelledby="chaintitle chaindesc" style="max-width:900px">
+        <title id="chaintitle">The weekly run for one account, as a chain of artifacts</title>
+        <desc id="chaindesc">The warehouse feeds a cached worksheet, which is extracted into a single JSON payload, which builds a dated deck. Two prose streams — a model-written narrative and a work-in-flight summary — also feed the dated deck. The dated deck is then validated by a six-check quality gate; on a pass the same file is published over the stable bookmarked URL, and on a failure nothing is published and last week's deck stands.</desc>
+
+        <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">ONE ACCOUNT · ONE WEEKLY RUN · UNATTENDED</text>
+
+        <!-- the two prose streams -->
+        <g font-family="ui-sans-serif, system-ui, sans-serif" fill="currentColor">
+          <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+            <rect x="300" y="40" width="176" height="52" rx="2"/>
+            <rect x="560" y="40" width="176" height="52" rx="2"/>
+          </g>
+          <text x="388" y="64" font-size="13.5" text-anchor="middle">Narrative</text>
+          <text x="388" y="81" font-size="11" text-anchor="middle" opacity="0.6">model, under six guards</text>
+          <text x="648" y="64" font-size="13.5" text-anchor="middle">Work in flight</text>
+          <text x="648" y="81" font-size="11" text-anchor="middle" opacity="0.6">trackers, never authored</text>
+        </g>
+
+        <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.3" stroke-dasharray="5 3">
+          <path d="M388 92 L388 160 L505 160 L505 189"/>
+          <path d="M648 92 L648 160 L551 160 L551 189"/>
+        </g>
+        <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.3">
+          <path d="M501 183 L505 190 L509 183"/>
+          <path d="M547 183 L551 190 L555 183"/>
+        </g>
+        <text x="528" y="140" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">the words</text>
+        <text x="188" y="140" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.6">the numbers</text>
+
+        <!-- the artifact chain -->
+        <g font-family="ui-sans-serif, system-ui, sans-serif" fill="currentColor">
+          <g stroke="currentColor" stroke-opacity="0.35" fill="none">
+            <rect x="0"   y="196" width="120" height="56" rx="2"/>
+            <rect x="156" y="196" width="120" height="56" rx="2"/>
+            <rect x="312" y="196" width="120" height="56" rx="2"/>
+            <rect x="468" y="196" width="120" height="56" rx="2"/>
+          </g>
+          <rect x="624" y="196" width="120" height="56" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.6"/>
+          <rect x="780" y="196" width="120" height="56" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.6"/>
+
+          <text x="60"  y="222" font-size="13" text-anchor="middle">Warehouse</text>
+          <text x="60"  y="239" font-size="11" text-anchor="middle" opacity="0.6">source of record</text>
+          <text x="216" y="222" font-size="13" text-anchor="middle">Worksheet</text>
+          <text x="216" y="239" font-size="11" text-anchor="middle" opacity="0.6">cached, refreshed</text>
+          <text x="372" y="222" font-size="13" text-anchor="middle">Payload</text>
+          <text x="372" y="239" font-size="11" text-anchor="middle" opacity="0.6">one JSON</text>
+          <text x="528" y="222" font-size="13" text-anchor="middle">Dated deck</text>
+          <text x="528" y="239" font-size="11" text-anchor="middle" opacity="0.6">nobody reads it</text>
+          <text x="684" y="222" font-size="13" text-anchor="middle">Quality gate</text>
+          <text x="684" y="239" font-size="11" text-anchor="middle" opacity="0.6">six checks</text>
+          <text x="840" y="222" font-size="13" text-anchor="middle">Stable deck</text>
+          <text x="840" y="239" font-size="11" text-anchor="middle" opacity="0.6">bookmarked URL</text>
+        </g>
+
+        <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4">
+          <path d="M126 224 L148 224"/><path d="M142 220 L149 224 L142 228"/>
+          <path d="M282 224 L304 224"/><path d="M298 220 L305 224 L298 228"/>
+          <path d="M438 224 L460 224"/><path d="M454 220 L461 224 L454 228"/>
+          <path d="M594 224 L616 224"/><path d="M610 220 L617 224 L610 228"/>
+          <path d="M750 224 L772 224"/><path d="M766 220 L773 224 L766 228"/>
+          <path d="M684 252 L684 289"/><path d="M680 283 L684 290 L688 283"/>
+        </g>
+        <text x="761" y="214" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">pass</text>
+        <text x="694" y="274" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="currentColor" opacity="0.7">fail</text>
+
+        <!-- the failure state -->
+        <rect x="468" y="296" width="432" height="48" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
+        <text x="488" y="317" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.8">Nothing is published.</text>
+        <text x="488" y="335" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.6">Last week&#8217;s deck stands — stale and dated is recoverable; wrong is not.</text>
+      </svg>
+    </div>
+    <figcaption><strong>The chain.</strong> The worksheet is the stage people misread. Its tabs
+    are warehouse results the spreadsheet runs and caches, so it is <em>refreshed, not recomputed</em>
+    — which is why a stale worksheet cannot be fixed by re-running the extractor, and why the run
+    polls every data object to success before anything reads it. Note also that the numbers and the
+    words arrive by different mechanisms and therefore fail in different ways; that is the single
+    most useful thing to know when a deck looks wrong.</figcaption>
+  </figure>
+
+  <h3>Build, validate, then publish the artifact you validated</h3>
+
+  <p>The ordering of the last three steps is the safety property of the whole system, and it does
+  not look like much on a diagram. A run always builds a <em>dated</em> file that nobody has
+  bookmarked. The gate then validates that file, and only on a pass does the run upload
+  <strong>the very same file</strong> over the stable URL. The validated artifact and the shipped
+  artifact cannot diverge, because they are one object.</p>
+
+  <p>The gate reads the deck's PDF export rather than its build log, because the build cheerfully
+  reports success on the failures that only exist at render time — a dropped bullet, an axis that
+  collapsed to a bare <code>0K</code>, a caption that wrapped over the row beneath it. Six checks
+  run against the rendered page: build warnings that were logged and then exited zero anyway; slide
+  sanity, meaning no pages at all or any slide under twenty characters of text; identity, meaning
+  the deck never names its own account or is missing its week-ending date; contamination, meaning
+  another configured account's label appears anywhere in the text; template leakage, meaning
+  placeholder markers survived into the render; and the draft badge, checked in both directions.</p>
+
+  <p>The more useful half is what the gate <em>structurally cannot</em> catch, which is written
+  down beside it rather than left to be rediscovered. It scans rendered text, so it can only catch
+  a leak that has a name in it — <strong>a wrong number is invisible to it</strong>, which is
+  exactly how one account's ticket-count row once quietly reported another account's tickets. And
+  its contamination list is assembled from the config files, so it knows only the accounts that
+  have been configured; anything unscreened is not on the list and will not be until it has a
+  config of its own.</p>
+
+  <h3>What each layer can and cannot see</h3>
+
+  <p>Four independent layers validate the run, and none of them trusts a model or an API's success
+  response. Knowing which layer owns a failure is how you fix it in one attempt instead of three —
+  and knowing the blind spots is how you avoid trusting a green run more than it deserves.</p>
+
+  <div class="table-wrap">
+    <table class="stack">
+      <caption>The four validation layers, and the failure each one is blind to.</caption>
+      <thead>
+        <tr><th scope="col">Layer</th><th scope="col">Guards</th><th scope="col">Cannot see</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Freshness</th>
+          <td data-label="Guards">Every connected tab polled to success; extraction fails closed on a stale freshness stamp</td>
+          <td data-label="Cannot see">A feed that dies <em>by quantity</em> — rows land on schedule while the units in them collapse. The max date still reads green</td>
+        </tr>
+        <tr>
+          <th scope="row">Grounding</th>
+          <td data-label="Guards">Every figure must appear in the payload; cross-account contamination; framing; at most two figures per bullet; bullet <em>length</em>, not just count</td>
+          <td data-label="Cannot see">Whether a true sentence is the <em>right</em> sentence. A caveat that inverts the obvious reading still passes</td>
+        </tr>
+        <tr>
+          <th scope="row">Provenance</th>
+          <td data-label="Guards">Every reference, title, owner, status and date must trace to an item actually fetched, or the draft is rejected</td>
+          <td data-label="Cannot see">An item that was never fetched at all. Scope is set by the query, and the query is config</td>
+        </tr>
+        <tr>
+          <th scope="row">Render</th>
+          <td data-label="Guards">The published-form PDF: dropped content, blank slides, identity, contamination, placeholders, draft badge</td>
+          <td data-label="Cannot see">Numbers, and any leak that renders without a name attached to it</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p><strong>Two lessons that kept recurring</strong>, both learned the expensive way. First: <em>a
+    guard that runs downstream of generation cannot be fixed by the generator.</em> An over-long
+    bullet passed the narrative validator, was silently dropped at render, and failed the quality
+    gate — while the retry loop, the one mechanism that could have shortened it, was structurally
+    blind to the problem. The fix was to hand the renderer's own fitting function to the validator,
+    so the thing that decides and the thing that measures share a definition.</p>
+    <p>Second: <em>calibrate every guard against output a human already shipped.</em> A guard tuned
+    to an idea of good rather than to real accepted work does not fail loudly. It burns retries and
+    blocks the deck, and it looks like flakiness rather than like a bad threshold.</p>
+  </div>
+
+  <h3>Three orchestration decisions</h3>
+
+  <p><strong>Why it runs at 07:15 and not earlier.</strong> The velocity table the deck leans on
+  rebuilds three times a day, the first pass finishing shortly before seven; the order tables land
+  around 02:45. A run at 05:00 would therefore read Sunday's inventory against Monday's sales — and
+  would <em>pass the freshness check silently</em>, because both halves are individually present and
+  individually current-looking. The trigger sits after the first rebuild for that reason alone, and
+  the note recorded next to it says that if an earlier deck is ever wanted, the fix is to add an
+  earlier upstream build, not to move the trigger down.</p>
+
+  <p><strong>A schedule, not an event.</strong> An event-driven trigger that never fires produces no
+  execution — nothing red, nothing to alert on, no row anywhere saying a thing did not happen. A
+  neighbouring pipeline silently skipped a Monday in July that way and nobody noticed until someone
+  went looking for the deck. A missed schedule is visible. The scheduler is allowed exactly one
+  catch-up run, on the principle that the brief should be late rather than skipped, and never
+  published twice for the same week.</p>
+
+  <p><strong>Serial, first by constraint and then by choice.</strong> The accounts run in one
+  serially-looping task rather than in parallel. That began as an orchestrator limitation, but it is
+  what I would have picked anyway: the steps hammer the spreadsheet API, the refresh polls a shared
+  query quota, and a serial log stays readable when one account fails at three in the morning. Each
+  account appends to a shared status file that the summary step reads at the end. The cost is
+  honest and worth stating — roughly ten minutes an account, so a full run takes a couple of hours.
+  Each account is isolated, so one failure cannot stop the rest; a failed account simply keeps last
+  week's deck, the execution ends in a warning state that existing alerting already catches, and a
+  summary posts to an internal channel as the human net under an unattended publish.</p>
+
+  <p class="note"><span class="marker">Caveat.</span> Configs ship baked into the deployed image
+  alongside the code, so a config-only change still needs a rebuild before it is live. "Adding an
+  account is a config file, not code" is a claim about <em>authoring</em> effort — an afternoon of
+  JSON instead of a branch — and not about the deploy path. The two get conflated, and only the
+  first one is true here.</p>
+
+  <h3>What it still doesn't do</h3>
+
+  <p>Three gaps stand on purpose, and are recorded as decisions rather than left as surprises.
+  There is <strong>no graceful degradation</strong>: a missing render dependency fails the deck step
+  outright rather than falling back to a metrics-only deck, because a partial deck of unclear
+  provenance is the exact failure the whole design exists to prevent. <strong>Dead upstream feeds
+  are suppressed per account and disclosed in the coverage note rather than fixed</strong> — honest
+  to the reader, but an empty table cannot trip a staleness alert, so a feed's recovery has to be
+  watched for deliberately instead of detected. And <strong>nothing in the system records who reads
+  a given deck.</strong> That one is not a decision I would defend; it is a gap I would close next,
+  and it is written down so that it stays visible.</p>
 
   <h2>The judgment calls</h2>
 
@@ -148,12 +356,18 @@
     </li>
 
     <li>
-      <h3>Count by title, not by full-text match</h3>
-      <p>Issue search matches descriptions as well as titles, so tickets spanning a dozen accounts
-      matched on a passing mention and inflated every count. A short account keyword matched 453
-      issues because it was a substring of the word "account." The scope rule is now: the account's
-      project, or the account named in the <em>title</em>. Titles are the reliable signal of whose
-      work an issue is.</p>
+      <h3>Filter on the way back, not on the way out</h3>
+      <p>Issue search matches descriptions as well as titles, and it matches <em>inside words</em>.
+      One short account token was a substring of the word "account" and pulled 453 issues. Another
+      three-letter token appeared inside an unrelated brand name, inside "severity" and inside
+      "engineering," returning eighty-odd matches for four real ones.</p>
+      <p>The obvious fix is to narrow the query to the account's own project. That fix is wrong, and
+      the measurement says so: one account's project held nineteen issues and did not contain two
+      that were unambiguously its work. So the broad query stays, and the filtering moves to <em>after</em>
+      the results come back — every text match is re-checked at a word boundary client-side, because
+      the search API cannot express one, while exact project matches pass through untouched.
+      <strong>An over-broad query can be narrowed after the fact; a too-narrow one is silently
+      missing work you will never know to look for.</strong></p>
     </li>
 
     <li>

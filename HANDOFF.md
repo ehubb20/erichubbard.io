@@ -40,7 +40,8 @@ These were settled deliberately. Change them if you want, but know what you're c
 index.html                       About/résumé. Headline is Eric's own wording.
 work/index.html                  Three entries. #1 links out; #2 and #3 are complete
                                  summaries with artifacts and no "read more".
-work/wbr-exec-brief/             Full case study (~1,050 words).
+work/wbr-exec-brief/             Full case study (~1,900 words) — problem, constraint,
+                                 architecture, seven judgment calls, outcome.
 work/wbr-exec-brief/deck/        Synthetic sample deck, 12 sections, 4 charts, noindex.
 style.css                        Design tokens at the top.
 tools/make_charts.py             One-off chart generator. Not a build step.
@@ -51,8 +52,22 @@ assets/                          Scrubbed .docx (source of truth) + generated PD
 **Entry 1 — WBR exec brief.** Complete. Seven judgment calls: failing closed on stale
 data, "source not checked" vs "no activity", never inventing an owner, the ×28 unit
 correction printed on the slide with its error bar, the credential-scope bug that
-returned 19 of 79 issues with an HTTP 200, title-scope counting, searching by function.
-Says 17 configured accounts.
+returned 19 of 79 issues with an HTTP 200, filtering tracker matches on the way back,
+searching by function. Says 17 configured accounts.
+
+An **architecture section** was added 2026-08-21 from the project's own `ARCHITECTURE.md`
+(source kept out of this repo; a scrubbed copy is in the session scratchpad). It carries
+the run as a chain of artifacts, the build → validate → publish ordering, the four
+validation layers with what each is blind to, three orchestration decisions, and the
+gaps that stand on purpose. Deliberately **not** ported: the module inventory, the
+credentials table, the account roster, and the two known gaps about credential posture —
+all internal reference, all the most sensitive material in the file, and none of it
+interesting to the reader this page is for.
+
+The judgment call about tracker scope was **corrected** in that pass. The page had said
+the fix was to scope by project or by the account named in the title. The architecture
+doc records a later finding: project-only *under*-reports, so the real fix keeps the
+broad query and re-checks each match at a word boundary client-side.
 
 **Entry 2 — three-layer architecture.** Rewritten around how the design *eroded*: two
 of three scheduled jobs live in the connector directory, one bypasses the connector
@@ -71,7 +86,11 @@ the largest one does not.
   diagrams get a scroll container with a legibility floor rather than shrinking to 6px type.
 - Leak scan of `work/` is clean — no client names, account IDs, hostnames, schema names,
   or real colleague names. Fictional names in the deck were re-picked after three landed
-  within a letter or two of real ones.
+  within a letter or two of real ones. Re-run 2026-08-21 after the architecture section
+  landed, widened to cover warehouse dataset names, vault paths, internal ticket prefixes,
+  service-account identities and every script name in the source doc. Clean.
+  The scan script is in the session scratchpad as `leakscan.sh` — worth keeping if the
+  site grows.
 - Résumé PDF: 2 pages, resolves at `/assets/eric-hubbard-resume.pdf`, no phone number.
 
 ## Blocking launch
@@ -80,7 +99,12 @@ the largest one does not.
    Eric Hubbard (GoDaddy placeholder since Dec 2024).
 2. **`assets/eric.jpg`** — square, ~400×400, plain background. Then replace the
    `.photo-placeholder` div in `index.html` with `<img src="/assets/eric.jpg" alt="Eric Hubbard">`.
-3. **Confirm "17 accounts" is true** before publishing — it is written in the present tense.
+3. **Confirm the account numbers** before publishing. The architecture doc says
+   *seventeen configs, fifteen live* (two churned). The site says "17 accounts, one
+   config file each" and "seventeen accounts configured" — both defensible — but the
+   loose phrase "covers seventeen of them" was changed to "carries seventeen account
+   configurations" on 2026-08-21 because it was not. If someone asks in an interview,
+   the honest answer is seventeen built, fifteen currently running.
 4. **Tell your manager** you're publishing anonymized writeups of your work.
 5. Push to GitHub → Cloudflare Pages (preset `None`, no build command, output `/`),
    add the domain, enable Web Analytics (cookieless, so no consent banner).
@@ -89,6 +113,10 @@ the largest one does not.
 
 - **Entry 2 length.** ~330 words plus a large figure, noticeably heavier than entry 3.
   If the page reads top-heavy, give it its own detail page rather than cutting it.
+- **Case study length.** Entry 1 nearly doubled with the architecture section. It is a
+  document to be read closely rather than skimmed, which suits the reader, but it is now
+  long enough that a short table of contents under the standfirst may earn its place.
+  Worth a look with fresh eyes before launch.
 - **Detail pages for entries 2 and 3** were deferred by design. Same template as entry 1:
   Problem / Constraint / What I built / Judgment calls / Outcome.
 - **`ai-bi` as a future entry.** Roughly half yours, and it is a *leadership* artifact —
