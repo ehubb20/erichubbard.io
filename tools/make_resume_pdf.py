@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Typeset assets/eric-hubbard-resume-scrubbed.docx into assets/eric-hubbard-resume.pdf.
+"""Typeset assets/eric-hubbard-resume-scrubbed.docx into docs/assets/eric-hubbard-resume.pdf.
 
 One-off generator, NOT a build step. The .docx is the source of truth; this only
 lays it out in the site's register (Helvetica base-14, so nothing is embedded and
@@ -28,7 +28,7 @@ from reportlab.platypus import (BaseDocTemplate, Frame, HRFlowable, KeepTogether
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SRC = ROOT / "assets/eric-hubbard-resume-scrubbed.docx"
-OUT = ROOT / "assets/eric-hubbard-resume.pdf"
+OUT = ROOT / "docs/assets/eric-hubbard-resume.pdf"
 
 INK = HexColor("#1b1b18")
 SOFT = HexColor("#45453f")

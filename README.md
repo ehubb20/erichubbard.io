@@ -2,15 +2,27 @@
 
 Two-page portfolio site. Static HTML, one stylesheet, no build step, no dependencies.
 
+Everything GitHub Pages serves lives under `docs/`. Anything outside it is source and
+tooling that stays private to the repo.
+
 ```
-index.html                          About / résumé
-work/index.html                     Work index, 3 entries
-work/wbr-exec-brief/index.html      Case study (complete)
-work/wbr-exec-brief/deck/           Synthetic sample deck + preview.svg
-styles.css                          Everything (design tokens at the top)
-assets/                             Photo + résumé PDF
+docs/index.html                     About / résumé
+docs/work/index.html                Work index, 3 entries
+docs/work/wbr-exec-brief/index.html Case study (complete)
+docs/work/wbr-exec-brief/deck/      Synthetic sample deck + preview.svg
+docs/styles.css                     Everything (design tokens at the top)
+docs/assets/                        Photo, deck preview, generated résumé PDF
+docs/robots.txt, docs/sitemap.xml   Served at the site root
+
+assets/eric-hubbard-resume-scrubbed.docx   Résumé source of truth (not served)
 tools/make_charts.py                One-off chart generator (see below)
+tools/make_resume_pdf.py            One-off résumé typesetter (see below)
 ```
+
+The split matters: this repo is public, so every tracked file is readable on github.com
+whether or not Pages serves it. `docs/` controls what the *site* exposes, not what the
+*repo* exposes. Keep genuinely private notes untracked — `HANDOFF.md` is in `.gitignore`
+for exactly this reason.
 
 ## Editing
 
@@ -54,23 +66,30 @@ The résumé PDF is already generated and scrubbed: phone removed, location soft
 to "North Idaho". `assets/eric-hubbard-resume-scrubbed.docx` is the source of truth;
 edit it and re-run the generator (below) rather than editing the PDF.
 
-## Deploying to Cloudflare Pages
+## Deploying to GitHub Pages
 
-1. Push this directory to a GitHub repo.
-2. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git.
-3. Build settings: **framework preset `None`**, build command **empty**,
-   output directory **`/`**. There is no build step.
-4. Custom domains → add `erichubbard.io` and `www.erichubbard.io`.
-5. Web Analytics → enable for the domain. It is cookieless, so the site needs no
-   consent banner. Do not add Google Analytics.
+Live at https://ehubb20.github.io/erichubbard.io/ — a *project* site, so it is served
+from a subpath until a custom domain is attached. Every internal link is relative, so
+the subpath works; the canonical and `og:url` tags still point at `erichubbard.io`.
+
+1. Repo → Settings → Pages → Source: **Deploy from a branch**, branch `main`,
+   folder **`/docs`**. (Branch deploys only allow `/` or `/docs`, not an arbitrary folder.)
+2. Push to `main`; Pages rebuilds on its own. There is no build step.
+3. For `erichubbard.io`: register the domain, add a `CNAME` file in `docs/` containing
+   `erichubbard.io`, then point DNS at GitHub — four apex `A` records
+   (185.199.108–111.153) plus `www` CNAME → `ehubb20.github.io`. Check the current
+   addresses in GitHub's docs before relying on them.
+4. Settings → Pages → **Enforce HTTPS** once the certificate provisions.
 
 ## Conventions worth keeping
 
 - **No client names, employer names, account identifiers, colleague names,
-  hostnames or schema names anywhere under `work/`.** Employers appear only in the
+  hostnames or schema names anywhere under `docs/work/`.** Employers appear only in the
   experience section on the home page.
-- Every figure in `work/` is synthetic and labelled as such.
-- The deck sample carries `noindex`, so it should be read via the case study, not
-  found cold in search results.
-- No external requests: no CDN fonts, no analytics scripts beyond Cloudflare's,
-  no embeds. Keeps the site fast and dependency-free.
+- Every figure in `docs/work/` is synthetic and labelled as such.
+- The deck sample carries `noindex` as a page-level meta tag, not just a `robots.txt`
+  rule, so it stays out of search results even when served from a subpath where
+  `robots.txt` is ignored. Keep it that way.
+- No external requests: no CDN fonts, no analytics, no embeds. Keeps the site fast and
+  dependency-free. `styles.css` currently breaks this with a Google Fonts `@import` —
+  see the launch checklist above.

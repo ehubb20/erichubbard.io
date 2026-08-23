@@ -1,3 +1,6 @@
 .DS_Store
 assets/*.jpg
 .venv/
+
+# Working notes, deliberately untracked: this repo is public.
+HANDOFF.md

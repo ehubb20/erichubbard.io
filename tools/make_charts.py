@@ -2,7 +2,7 @@
 """Generate the inline SVG charts for the synthetic sample deck.
 
 One-off generator, NOT a build step: it writes finished SVG into
-work/wbr-exec-brief/deck/index.html at the <!-- CHART:name --> anchors and the
+docs/work/wbr-exec-brief/deck/index.html at the <!-- CHART:name --> anchors and the
 result is committed. The site never runs this. Re-run it only if you want to
 change the synthetic series.
 
@@ -240,7 +240,7 @@ CHARTS = {
 }
 
 if __name__ == "__main__":
-    deck = pathlib.Path(__file__).resolve().parents[1] / "work/wbr-exec-brief/deck/index.html"
+    deck = pathlib.Path(__file__).resolve().parents[1] / "docs/work/wbr-exec-brief/deck/index.html"
     html = deck.read_text()
     for name, fn in CHARTS.items():
         svg = fn()
