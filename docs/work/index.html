@@ -89,7 +89,7 @@ figure svg text[font-family^="ui-monospace"] { font-family: var(--font-heading);
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
           <div style="overflow-x: auto"><svg width="100%" viewBox="0 0 900 430" role="img" aria-labelledby="synctitle syncdesc" style="max-width: 900px">
         <title id="synctitle">One nightly run, six steps, with the two places it stops rather than guess</title>
-        <desc id="syncdesc">The job runs once a night. It selects eBay orders that shipped in more than one box in the last two days and subtracts anything already pushed, reads each order's current state and stops on any that already show a delivery time, writes one call per order line carrying that line's complete tracking set, appends every outcome to a log that the next run reads back, and posts the run's counts to a team channel. The delivery gate and the log are drawn as the two steps that control what the next run does.</desc>
+        <desc id="syncdesc">The job runs once a night, scheduled in n8n. It selects eBay orders that shipped in more than one box in the last two days and subtracts anything already pushed, reads each order's current state and stops on any that already show a delivery time, writes one call per order line carrying that line's complete tracking set, appends every outcome to a BigQuery log that the next run reads back, and posts the run's counts to Slack. Selection and logging run in BigQuery, the delivery read and the write both go to the eBay orders API. The delivery gate and the log are drawn as the two steps that control what the next run does.</desc>
 
         <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">ONE RUN, NIGHTLY, WHILE THE PACKAGES ARE STILL MOVING</text>
 
@@ -106,12 +106,20 @@ figure svg text[font-family^="ui-monospace"] { font-family: var(--font-heading);
           <rect x="40" y="290" width="250" height="46" rx="2" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3"></rect>
 
           <g font-size="13.5">
-            <text x="56" y="54">22:00, nightly</text>
-            <text x="56" y="120">select candidates</text>
-            <text x="56" y="186">delivery gate</text>
-            <text x="56" y="252">one write per line</text>
-            <text x="56" y="318">append-only log</text>
-            <text x="56" y="384">post the summary</text>
+            <text x="56" y="45">22:00, nightly</text>
+            <text x="56" y="111">select candidates</text>
+            <text x="56" y="177">delivery gate</text>
+            <text x="56" y="243">one write per line</text>
+            <text x="56" y="309">append-only log</text>
+            <text x="56" y="375">post the summary</text>
+          </g>
+          <g font-family="ui-monospace, Menlo, monospace" font-size="10.5" letter-spacing="0.8" fill="currentColor" opacity="0.5">
+            <text x="56" y="63">n8n</text>
+            <text x="56" y="129">BigQuery</text>
+            <text x="56" y="195">eBay orders API · read</text>
+            <text x="56" y="261">eBay orders API · write</text>
+            <text x="56" y="327">BigQuery</text>
+            <text x="56" y="393">Slack</text>
           </g>
 
           <g font-size="12.5" opacity="0.7">
