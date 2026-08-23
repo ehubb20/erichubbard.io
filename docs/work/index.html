@@ -65,65 +65,87 @@ figure svg text[font-family^="ui-monospace"] { font-family: var(--font-heading);
         <span class="tag tag-outline" style="font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase">Integration · 2026 · Nightly</span>
         <h2 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.08; letter-spacing: 0.01em; text-transform: uppercase; margin: 16px 0 24px; max-width: 28ch">The API said yes and did nothing</h2>
         <div style="max-width: 68ch; display: flex; flex-direction: column; gap: 20px">
-          <p style="margin: 0">An order ships in five boxes and the buyer can only see one of them. The sync between the order management system and the marketplace records a single tracking number per order, so every additional package arrives untracked as far as the customer is concerned. Support absorbs the difference, one “where is the rest of my order” at a time.</p>
-          <p style="margin: 0">The finding that shaped everything else: <strong style="font-weight: 700">the editable window is gated on delivery, not on fulfilment.</strong> Once an order shows a delivery time, additional tracking is accepted and silently discarded. Nothing errors. So the job has to run the same night, while the packages are still moving, and read the delivery timestamp before it writes anything.</p>
-          <p style="margin: 0">The modern REST fulfilment endpoint has the same problem in a different place. On a line that is already fulfilled it returns a created response and then does nothing at all. The older Trading call accepts a list of tracking numbers and actually writes them, so that is the one the job uses. It was proven on an eight-package order, all eight now on the record.</p>
-          <p style="margin: 0">Tracking is stored per line item rather than per order, and the order management system’s item number turns out to be the marketplace’s line identifier, so every package maps to the line it belongs to. The job sends one call per line carrying that line’s complete set. <strong style="font-weight: 700">Never order level:</strong> an order-level call copies a single tracking number onto every line, which is worse than doing nothing because it looks like it worked.</p>
-          <p style="margin: 0">An append-only log is the memory. It de-duplicates the two-day selection window, so the deliberate day-to-day overlap heals a missed run instead of sending twice; it drives retries, because a failed row is picked up again the next night and a sent row is not; and it is the audit trail. A tracking number that ties to no line at all is logged for a person rather than guessed at, and nothing writes without an explicit execute flag. A seven-day catch-up considered 129 orders and could act on 9. The other 120 had already delivered, which is the whole argument for a nightly job rather than a cleanup script.</p>
-          <p style="margin: 0">What I take from it: <strong style="font-weight: 700">a success response is not evidence that anything happened.</strong> Both ways this could fail quietly returned success. The job trusts observable state, the delivery timestamp and its own log, over anything the API says back.</p>
+          <p style="margin: 0">Fulfilment splits an order line by line, so a five-item order goes out as five packages with five separate tracking numbers. eBay keeps only the first one it is given and ignores the rest. Every other package is invisible to the buyer, and putting them back on the order meant somebody finding each tracking number by hand and uploading it, one order at a time, every day. That is the work this replaced.</p>
+          <p style="margin: 0">The nightly run asks a narrow question: which orders went out in more than one box in the last two days, and which of those boxes eBay has never been told about. Getting there takes two hops, because no single table knows. A shipment feed lists one row per package, a bridge table ties each tracking number back to the order it belongs to, and the order management system’s item number turns out to be eBay’s own line identifier. Only orders carrying more than one distinct tracking number survive the filter, and everything already pushed is subtracted before a single call goes out.</p>
+          <p style="margin: 0">Then the finding that shaped the rest. <strong style="font-weight: 700">The editable window is gated on delivery, not on fulfilment.</strong> Once an order shows a delivery time, additional tracking is accepted and silently discarded. Nothing errors. So the job reads each order’s current state from eBay at runtime rather than trusting the warehouse, and stops on anything already delivered. A seven-day catch-up considered 129 orders and could act on nine. The other 120 had delivered already, which is the whole argument for a nightly job rather than a cleanup script.</p>
+          <p style="margin: 0">The modern REST fulfilment endpoint fails the same way in a different place. On a line that is already fulfilled it returns a created response and does nothing at all. The older Trading call accepts a list of tracking numbers and actually writes them, so that is the one the job uses. It was proven on an eight-package order, all eight now on the record.</p>
+          <p style="margin: 0">Writes go one line at a time, each carrying that line’s complete set rather than a diff against what is already there, which is what makes a re-run harmless. <strong style="font-weight: 700">Never order level:</strong> an order-level call copies a single tracking number onto every line, which is worse than doing nothing because it looks like it worked. Carrier codes are normalised to eBay’s own carrier names and tracking stripped to alphanumeric on the way out.</p>
+          <p style="margin: 0">A package whose line identifier is missing, or present but malformed, is never sent. It is tagged for review and logged for a person, because a tracking number written to the wrong line is much harder to find later than one that never went at all.</p>
+          <p style="margin: 0">The log is append-only and is the memory between runs. It de-duplicates the two-day window, so the deliberate day-to-day overlap heals a missed night instead of sending twice; it drives retries, because a failed row is selected again and a sent row is not; and it is the audit trail. Each run finishes by posting its own counts, sent, failed and review, to the team’s alert channel, taken from that run’s results rather than by re-querying the table.</p>
+          <p style="margin: 0">What I take from it: <strong style="font-weight: 700">a success response is not evidence that anything happened.</strong> Both of the ways this could fail quietly returned success, and there is a third. If the upstream shipment feed stops updating, the run finds nothing, reports nothing wrong and posts a clean summary. So the thing worth monitoring is the freshness of the source, not the health of the job.</p>
         </div>
+
+        <h3 style="font-family: var(--font-heading); font-weight: 600; font-size: 20px; line-height: 1.15; letter-spacing: 0.01em; text-transform: uppercase; margin: 40px 0 20px">The stack</h3>
+        <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px clamp(28px, 4vw, 56px); margin: 0">
+          <div><dt style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-700); margin-bottom: 5px">Selection</dt><dd style="margin: 0; font-size: 15px; line-height: 22px">BigQuery: one row per order, line and package, minus everything already sent</dd></div>
+          <div><dt style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-700); margin-bottom: 5px">Orchestration</dt><dd style="margin: 0; font-size: 15px; line-height: 22px">n8n, one nightly schedule, six nodes</dd></div>
+          <div><dt style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-700); margin-bottom: 5px">Writes</dt><dd style="margin: 0; font-size: 15px; line-height: 22px">eBay orders API, the older Trading call rather than REST fulfilment</dd></div>
+          <div><dt style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-700); margin-bottom: 5px">Reporting</dt><dd style="margin: 0; font-size: 15px; line-height: 22px">Slack: sent, failed and review counts per run</dd></div>
+          <div><dt style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-700); margin-bottom: 5px">Backfill</dt><dd style="margin: 0; font-size: 15px; line-height: 22px">A Python engine holding the same logic, with a dry run by default and a wider window</dd></div>
+        </dl>
+
 
         <figure class="blueprint" style="margin: 40px 0 0; padding: clamp(20px, 3vw, 36px); color: var(--color-accent-800)">
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-          <div style="overflow-x: auto"><svg width="100%" viewBox="0 0 900 290" role="img" aria-labelledby="synctitle syncdesc" style="max-width: 900px">
-        <title id="synctitle">The nightly path, and the two places it refuses to guess</title>
-        <desc id="syncdesc">Each night the job selects multi-package orders shipped in the last two days, checks whether each has already been delivered, and skips the ones that have because the marketplace would discard the tracking silently. Surviving orders get one write per order line carrying that line's full tracking set. Every outcome is appended to a log, which feeds back into the next night's selection so the overlapping window cannot send the same package twice.</desc>
+          <div style="overflow-x: auto"><svg width="100%" viewBox="0 0 900 430" role="img" aria-labelledby="synctitle syncdesc" style="max-width: 900px">
+        <title id="synctitle">One nightly run, six steps, with the two places it stops rather than guess</title>
+        <desc id="syncdesc">The job runs once a night. It selects eBay orders that shipped in more than one box in the last two days and subtracts anything already pushed, reads each order's current state and stops on any that already show a delivery time, writes one call per order line carrying that line's complete tracking set, appends every outcome to a log that the next run reads back, and posts the run's counts to a team channel. The delivery gate and the log are drawn as the two steps that control what the next run does.</desc>
 
-        <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">NIGHTLY · WHILE THE PACKAGES ARE STILL IN TRANSIT</text>
+        <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">ONE RUN, NIGHTLY, WHILE THE PACKAGES ARE STILL MOVING</text>
 
-        <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
+        <g font-family="ui-sans-serif, system-ui, sans-serif" fill="currentColor">
+          <!-- step boxes -->
           <g fill="none" stroke="currentColor" stroke-opacity="0.35">
-            <rect x="0" y="26" width="196" height="58" rx="2"></rect>
-            <rect x="228" y="26" width="196" height="58" rx="2"></rect>
-            <rect x="456" y="26" width="196" height="58" rx="2"></rect>
-            <rect x="684" y="26" width="216" height="58" rx="2"></rect>
+            <rect x="40" y="26" width="250" height="46" rx="2"></rect>
+            <rect x="40" y="92" width="250" height="46" rx="2"></rect>
+            <rect x="40" y="224" width="250" height="46" rx="2"></rect>
+            <rect x="40" y="356" width="250" height="46" rx="2"></rect>
           </g>
-          <text x="15" y="52">select candidates</text>
-          <text x="243" y="52">delivery gate</text>
-          <text x="471" y="52">one write per line</text>
-          <text x="699" y="52">append-only log</text>
-          <g font-size="11.5" opacity="0.6">
-            <text x="15" y="70">shipped in last 2 days</text>
-            <text x="243" y="70">already delivered?</text>
-            <text x="471" y="70">that line’s full set</text>
-            <text x="699" y="70">sent / failed / review</text>
+          <!-- the two that decide what happens next, drawn broken -->
+          <rect x="40" y="158" width="250" height="46" rx="2" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3"></rect>
+          <rect x="40" y="290" width="250" height="46" rx="2" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3"></rect>
+
+          <g font-size="13.5">
+            <text x="56" y="54">22:00, nightly</text>
+            <text x="56" y="120">select candidates</text>
+            <text x="56" y="186">delivery gate</text>
+            <text x="56" y="252">one write per line</text>
+            <text x="56" y="318">append-only log</text>
+            <text x="56" y="384">post the summary</text>
+          </g>
+
+          <g font-size="12.5" opacity="0.7">
+            <text x="312" y="54">late enough that the day has landed, early enough that it has not delivered</text>
+            <text x="312" y="114">more than one box, shipped inside two days,</text>
+            <text x="312" y="130">minus everything already pushed</text>
+            <text x="312" y="180">read the order’s state from eBay now; a delivery time</text>
+            <text x="312" y="196">means stop, because the write would be discarded</text>
+            <text x="312" y="246">that line’s complete set, never order level,</text>
+            <text x="312" y="262">so a re-run cannot corrupt an order</text>
+            <text x="312" y="312">sent, failed or review; a failed row is retried</text>
+            <text x="312" y="328">tomorrow, a sent row is never selected again</text>
+            <text x="312" y="384">this run’s own counts, not a query</text>
           </g>
         </g>
 
+        <!-- flow between steps -->
         <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4">
-          <path d="M196 55 L228 55"></path><path d="M220 50 L229 55 L220 60"></path>
-          <path d="M424 55 L456 55"></path><path d="M448 50 L457 55 L448 60"></path>
-          <path d="M652 55 L684 55"></path><path d="M676 50 L685 55 L676 60"></path>
+          <path d="M165 72 L165 92"></path><path d="M160 84 L165 93 L170 84"></path>
+          <path d="M165 138 L165 158"></path><path d="M160 150 L165 159 L170 150"></path>
+          <path d="M165 204 L165 224"></path><path d="M160 216 L165 225 L170 216"></path>
+          <path d="M165 270 L165 290"></path><path d="M160 282 L165 291 L170 282"></path>
+          <path d="M165 336 L165 356"></path><path d="M160 348 L165 357 L170 348"></path>
         </g>
 
-        <!-- the dead end: delivered orders are dropped, not written to -->
-        <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4" stroke-dasharray="5 3">
-          <path d="M326 84 L326 132"></path>
+        <!-- the log feeds the next run's selection -->
+        <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4" stroke-dasharray="5 3">
+          <path d="M40 313 L16 313 L16 115 L40 115"></path>
         </g>
-        <g stroke="currentColor" stroke-opacity="0.55" fill="none" stroke-width="1.4">
-          <path d="M321 124 L326 133 L331 124"></path>
-        </g>
-        <rect x="228" y="132" width="300" height="44" rx="2" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.55" stroke-dasharray="5 3"></rect>
-        <text x="243" y="159" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.85">delivered, so the write is dropped</text>
-
-        <!-- the memory loop -->
         <g stroke="currentColor" stroke-opacity="0.45" fill="none" stroke-width="1.4">
-          <path d="M792 84 L792 232 L98 232 L98 92"></path>
-          <path d="M93 100 L98 91 L103 100"></path>
+          <path d="M32 110 L41 115 L32 120"></path>
         </g>
-        <text x="120" y="224" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.7">a sent package is never selected again; a failed one is</text>
       </svg></div>
-          <figcaption style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-divider); max-width: 76ch; font-size: 14px; line-height: 23px; color: color-mix(in srgb, var(--color-text) 70%, transparent)">The nightly path, with the two places the design refuses to guess. An order that already shows a delivery time is dropped rather than written to, because the write would be accepted and discarded. The log feeds back into the next night’s selection, which is what lets the two-day window overlap on purpose and still never send the same package twice.</figcaption>
+          <figcaption style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-divider); max-width: 76ch; font-size: 14px; line-height: 23px; color: color-mix(in srgb, var(--color-text) 70%, transparent)">One run, top to bottom, with the two steps that decide what the next run does drawn as broken outlines. The gate stops anything already delivered, because the write would be accepted and thrown away. The log loops back into the next night’s selection, which is what lets the two-day window overlap on purpose and still never send the same package twice.</figcaption>
         </figure>
       </div>
     </article>
