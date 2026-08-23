@@ -7,7 +7,7 @@ index.html                          About / résumé
 work/index.html                     Work index, 3 entries
 work/wbr-exec-brief/index.html      Case study (complete)
 work/wbr-exec-brief/deck/           Synthetic sample deck + preview.svg
-style.css                           Everything
+styles.css                          Everything (design tokens at the top)
 assets/                             Photo + résumé PDF
 tools/make_charts.py                One-off chart generator (see below)
 ```
@@ -15,7 +15,7 @@ tools/make_charts.py                One-off chart generator (see below)
 ## Editing
 
 Open the file, edit the HTML, commit. There is nothing to install and nothing to run.
-Colours, type scale and spacing are all tokens at the top of `style.css`.
+Colours, type scale and spacing are all tokens at the top of `styles.css`.
 
 The four charts in the sample deck are finished SVG committed into the HTML. The
 site does not generate anything at load or deploy time. `tools/make_charts.py`
@@ -42,10 +42,13 @@ spills past two pages, and uses only the base-14 PDF fonts so nothing is embedde
 
 ## Before launch
 
-- [ ] `assets/eric.jpg`: square, ~400×400, plain background. Then in `index.html`
-      replace the `.photo-placeholder` div with
-      `<img src="/assets/eric.jpg" alt="Eric Hubbard">`.
+- [x] Headshot is in place at `assets/headshot.jpeg`.
 - [ ] Register `erichubbard.io`.
+- [ ] `styles.css` pulls Barlow and Barlow Condensed from Google Fonts via `@import`,
+      which breaks the "no external requests" convention below. Either self-host both
+      families under `assets/fonts/` and drop the `@import`, or relax the convention.
+- [ ] Nothing links to `assets/eric-hubbard-resume.pdf` yet. Add the download link to
+      `index.html` if the résumé should be reachable from the site.
 
 The résumé PDF is already generated and scrubbed: phone removed, location softened
 to "North Idaho". `assets/eric-hubbard-resume-scrubbed.docx` is the source of truth;

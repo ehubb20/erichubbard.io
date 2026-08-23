@@ -3,104 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Selected work · Eric Hubbard</title>
-<meta name="description" content="Three worked examples: an agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
-<link rel="canonical" href="https://erichubbard.io/work/">
-<meta property="og:title" content="Selected work · Eric Hubbard">
-<meta property="og:description" content="An agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://erichubbard.io/work/">
-<link rel="stylesheet" href="/style.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+  <title>Selected work · Eric Hubbard</title>
+  <meta name="description" content="Three worked examples: an agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
+  <link rel="canonical" href="https://erichubbard.io/work/">
+  <meta property="og:title" content="Selected work · Eric Hubbard">
+  <meta property="og:description" content="An agent-run weekly business review pipeline, a layered marketplace connector architecture, and a returns revenue analysis.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://erichubbard.io/work/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13' font-family='monospace' font-weight='bold'>E</text></svg>">
+<link rel="stylesheet" href="../styles.css">
+<style>
+body { margin: 0; text-wrap: pretty; background: var(--color-bg); }
+a { color: var(--color-accent-700); text-decoration: none; }
+a:hover { color: var(--color-accent-800); text-decoration: underline; text-underline-offset: 3px; }
+/* Media queries and SVG type normalisation: the two things inline styles cannot carry. */
+@media (max-width: 860px) { [data-grid] { grid-template-columns: 1fr !important; } }
+figure svg text { font-family: var(--font-body); }
+figure svg text[font-family^="ui-monospace"] { font-family: var(--font-heading); font-weight: 600; }
+</style>
 </head>
 <body>
-<div class="page">
+<div style="min-height: 100%; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: 16px; line-height: 24px; padding-bottom: 96px">
 
-<header class="masthead">
-  <a class="wordmark" href="/">Eric Hubbard</a>
-  <nav>
-    <a href="/">About</a>
-    <a href="/work/" aria-current="page">Work</a>
-  </nav>
-</header>
+  <div style="background: var(--color-accent-900); color: var(--color-neutral-100)">
+    <nav class="nav" style="border-bottom: 1px solid color-mix(in srgb, #f5f5f8 22%, transparent); padding-inline: max(clamp(20px,5vw,72px), calc((100% - 1200px) / 2 + clamp(20px,5vw,72px))); gap: 24px; align-items: baseline; color: var(--color-neutral-100)">
+      <a href="../" class="nav-brand" style="font-size: 17px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-100)">Eric Hubbard</a>
+      <a href="../" style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: color-mix(in srgb, #f5f5f8 65%, transparent)">About</a>
+      <a href="./" aria-current="page" style="font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-neutral-100)">Work</a>
+    </nav>
 
-<main>
-
-  <p class="eyebrow">Selected work</p>
-  <h1>Three things I've built, and the decisions that don't show in the output</h1>
-  <div class="col">
-    <p class="lede">One automation product, one architecture, one analysis. They are here because
-    each went wrong in a different way first.</p>
-    <p class="note"><span class="marker">Note.</span> Client names, employers, account identifiers,
-    colleague names, hostnames and schema names have been removed throughout, and every figure shown
-    is synthetic. Dates, decisions and reasoning are unchanged.</p>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 72px clamp(20px,5vw,72px) 80px">
+      <span style="display: block; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--color-accent-300); margin-bottom: 28px">Selected work</span>
+      <h1 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(36px, 4.8vw, 68px); line-height: 1.05; letter-spacing: 0.01em; text-transform: uppercase; margin: 0; margin-left: -0.052em; max-width: 24ch">Three things I’ve built, and the decisions that don’t show in the output</h1>
+      <p style="max-width: 56ch; margin: 40px 0 0; font-family: var(--font-heading); font-weight: 400; font-size: 20px; line-height: 30px; color: color-mix(in srgb, #f5f5f8 88%, transparent)">One automation product, one architecture, one analysis. Each one is written up for the decisions behind it, not just the output.</p>
+    </div>
   </div>
 
-  <!-- 1 -->
-  <article class="entry">
-    <p class="status">Automation · 2026 · in weekly use</p>
-    <h2>The weekly business review that builds itself</h2>
-    <div class="col">
-      <p>A packaged agent skill that assembles an exec-ready weekly deck for a marketplace account
-      out of five separate systems: warehouse metrics, Linear, Asana, Zendesk, and a shared
-      customer tracker. Twelve scripts, one JSON config per account, its own SQL and house style
-      guide.</p>
-      <p>The engineering was the easy half. A weekly review is a document people argue with out
-      loud, so the design constraint was never speed. It was that the deck must never be
-      confidently wrong. Most of the work went into failing closed on stale data, distinguishing
-      "source not checked" from "no activity," and catching a permissions bug that returned a
-      plausible-looking subset instead of an error.</p>
-      <p>The case study covers the architecture and the stack: the run as a chain of artifacts,
-      the build, validate, publish ordering that keeps a bad deck from reaching a reader, and the
-      four validation layers, each with its own blind spot written down beside it.</p>
-      <p><a class="readmore" href="/work/wbr-exec-brief/">Read the case study →</a></p>
-    </div>
-  </article>
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px,5vw,72px)">
 
-  <!-- 2 -->
-  <article class="entry">
-    <p class="status">Architecture · 2026</p>
-    <h2>Three layers, and where the second one leaked</h2>
-    <div class="col">
-      <p>Customer service operations touched eight external systems, each a different auth problem.
-      Amazon needs a token exchange <em>plus</em> request signing on every call, eBay is an OAuth
-      refresh flow, Walmart is a client-credentials grant with three mandatory headers, the support
-      desk is stateless basic auth. Every new automation re-solved all of it, and business logic kept
-      getting welded to whichever API it happened to start from.</p>
+    
+    <p style="max-width: 78ch; margin: 32px 0 0; font-size: 14px; line-height: 23px; color: color-mix(in srgb, var(--color-text) 66%, transparent)"><span style="font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; color: var(--color-accent-700)">Note.</span> Client names, employers, account identifiers, colleague names, hostnames and schema names have been removed throughout, and every figure shown is synthetic. Dates, decisions and reasoning are unchanged.</p>
+    
 
-      <p>I split it three ways. <strong>Connectors</strong> know one API each and hold no business
-      logic. <strong>Jobs</strong> orchestrate connectors to accomplish one outcome, end to end,
-      alone. <strong>Pipelines</strong> chain jobs. Eight connectors got built on shared conventions:
-      credentials from the environment, a checked-in reference of every implemented endpoint with its
-      rate limits, a CLI wrapper, a full method reference.</p>
+    <article data-grid="entry" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px clamp(24px, 4vw, 56px); align-items: start; padding: 64px 0 0; border-top: 1px solid var(--color-divider); margin-top: 56px">
+      <span style="font-family: var(--font-heading); font-weight: 600; font-size: 56px; line-height: 0.8; color: var(--color-accent-300); font-variant-numeric: tabular-nums">01</span>
+      <div>
+        <span class="tag tag-outline" style="font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase">automation · 2026 · in weekly use</span>
+        <h2 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.08; letter-spacing: 0.01em; text-transform: uppercase; margin: 16px 0 24px; max-width: 28ch">The weekly business review that builds itself</h2>
+        <div style="max-width: 68ch; display: flex; flex-direction: column; gap: 20px">
+          
+          <p style="margin: 0">A packaged automation that assembles an exec-ready weekly deck for a marketplace account out of five separate systems: warehouse metrics, Linear, Asana, Zendesk, and a shared customer tracker. Twelve scripts, one JSON config per account, its own SQL and house style guide.</p><p style="margin: 0">The engineering was the easy half. A weekly review is a document people argue with out loud, so the design constraint was never speed. It was that the deck must never be confidently wrong. Most of the work went into failing closed on stale data, distinguishing “source not checked” from “no activity,” and catching a permissions bug that returned a plausible-looking subset instead of an error.</p>
+          <p style="margin: 0">The case study covers the architecture and the stack: the run as a chain of artifacts, the build, validate, publish ordering that keeps a bad deck from reaching a reader, and the four validation layers, each with its own blind spot written down beside it.</p>
+          <p style="margin: 4px 0 0"><a class="btn btn-primary" href="wbr-exec-brief/" style="min-height: 40px; padding-inline: 20px; letter-spacing: 0.04em; text-transform: uppercase">Read the case study</a></p>
+        </div>
+      </div>
+    </article>
 
-      <p>Then it eroded, and where it eroded is the interesting part. Three jobs now run on a
-      schedule, but only one of them lives in the jobs layer. The other two grew <em>inside the
-      connector directory</em>, and one imports its warehouse and spreadsheet SDKs directly,
-      reaching straight past the layer that exists to prevent exactly that. Both of those jobs need a
-      warehouse connector and a spreadsheet connector. Neither exists. <strong>The missing
-      abstraction is what caused the violation</strong>, and the path of least resistance did the
-      rest.</p>
+    <article data-grid="entry" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px clamp(24px, 4vw, 56px); align-items: start; padding: 64px 0 0; border-top: 1px solid var(--color-divider); margin-top: 64px">
+      <span style="font-family: var(--font-heading); font-weight: 600; font-size: 56px; line-height: 0.8; color: var(--color-accent-300); font-variant-numeric: tabular-nums">02</span>
+      <div>
+        <span class="tag tag-outline" style="font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase">Architecture · 2026</span>
+        <h2 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.08; letter-spacing: 0.01em; text-transform: uppercase; margin: 16px 0 24px; max-width: 28ch">Three layers, and where the second one leaked</h2>
+        <div style="max-width: 68ch; display: flex; flex-direction: column; gap: 20px">
+          <p style="margin: 0">Customer service operations touched eight external systems, each a different auth problem. Amazon needs a token exchange <em>plus</em> request signing on every call, eBay is an OAuth refresh flow, Walmart is a client-credentials grant with three mandatory headers, the support desk is stateless basic auth. Every new automation re-solved all of it, and business logic kept getting welded to whichever API it happened to start from.</p>
+          <p style="margin: 0">I split it three ways. <strong style="font-weight: 700">Connectors</strong> know one API each and hold no business logic. <strong style="font-weight: 700">Jobs</strong> orchestrate connectors to accomplish one outcome, end to end, alone. <strong style="font-weight: 700">Pipelines</strong> chain jobs. Eight connectors got built on shared conventions: credentials from the environment, a checked-in reference of every implemented endpoint with its rate limits, a CLI wrapper, a full method reference.</p>
+          <p style="margin: 0">Then it eroded, and where it eroded is the interesting part. Three jobs now run on a schedule, but only one of them lives in the jobs layer. The other two grew <em>inside the connector directory</em>, and one imports its warehouse and spreadsheet SDKs directly, reaching straight past the layer that exists to prevent exactly that. Both of those jobs need a warehouse connector and a spreadsheet connector. Neither exists. <strong style="font-weight: 700">The missing abstraction is what caused the violation</strong>, and the path of least resistance did the rest.</p>
+          <p style="margin: 0">So the third layer is not unbuilt for want of time. You cannot chain jobs into pipelines when two of your three jobs are not jobs. They are scripts with schedules, producing a side effect and an exit code, with nothing to hand to a next step.</p>
+          <p style="margin: 0">The fix is four things in dependency order: write the two missing connectors; relocate the two stray jobs and repoint their imports; change the job contract so each one exports a function returning a structured result, with the entry point reduced to a thin CLI wrapper; add a CI check that fails when anything in the connector directory imports outside itself. Only the third of those is real work, and pipelines become a couple of afternoons afterwards.</p>
+          <p style="margin: 0">What I take from it: <strong style="font-weight: 700">naming an empty layer in a README is not enforcement.</strong> The documentation was clear and it drifted anyway, in the one place the abstraction was missing. Architecture holds when the contract makes the wrong thing hard, not when the prose says not to do it.</p>
+        </div>
 
-      <p>So the third layer is not unbuilt for want of time. You cannot chain jobs into pipelines
-      when two of your three jobs are not jobs. They are scripts with schedules, producing a side
-      effect and an exit code, with nothing to hand to a next step.</p>
-
-      <p>The fix is four things in dependency order: write the two missing connectors; relocate the
-      two stray jobs and repoint their imports; change the job contract so each one exports a
-      function returning a structured result, with the entry point reduced to a thin CLI wrapper; add
-      a CI check that fails when anything in the connector directory imports outside itself. Only the
-      third of those is real work, and pipelines become a couple of afternoons afterwards.</p>
-
-      <p>What I take from it: <strong>naming an empty layer in a README is not enforcement.</strong>
-      The documentation was clear and it drifted anyway, in the one place the abstraction was
-      missing. Architecture holds when the contract makes the wrong thing hard, not when the prose
-      says not to do it.</p>
-    </div>
-
-    <figure>
-      <div class="fig-scroll">
-      <svg viewBox="0 0 900 530" role="img" aria-labelledby="archtitle archdesc" style="max-width:900px">
+        <figure class="blueprint" style="margin: 40px 0 0; padding: clamp(20px, 3vw, 36px); color: var(--color-accent-800)">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="overflow-x: auto"><svg width="100%" viewBox="0 0 900 530" role="img" aria-labelledby="archtitle archdesc" style="max-width: 900px">
         <title id="archtitle">Three-layer architecture, as it actually stands</title>
         <desc id="archdesc">Layer one holds eight single-purpose API connectors, but also holds two scheduled jobs that do not belong there; one of them bypasses the connector layer entirely and imports its warehouse and spreadsheet SDKs directly. Layer two holds only one of the three jobs. Layer three, pipelines, is blocked because two of the three jobs are entry-point scripts with no return value to chain.</desc>
 
@@ -108,20 +83,20 @@
         <text x="0" y="12" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 1 · CONNECTORS · one API each, no business logic</text>
         <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
           <g stroke="currentColor" stroke-opacity="0.35" fill="none">
-            <rect x="0"   y="24" width="204" height="44" rx="2"/>
-            <rect x="232" y="24" width="204" height="44" rx="2"/>
-            <rect x="464" y="24" width="204" height="44" rx="2"/>
-            <rect x="696" y="24" width="204" height="44" rx="2"/>
-            <rect x="0"   y="80" width="204" height="44" rx="2"/>
-            <rect x="232" y="80" width="204" height="44" rx="2"/>
-            <rect x="464" y="80" width="204" height="44" rx="2"/>
-            <rect x="696" y="80" width="204" height="44" rx="2"/>
+            <rect x="0" y="24" width="204" height="44" rx="2"></rect>
+            <rect x="232" y="24" width="204" height="44" rx="2"></rect>
+            <rect x="464" y="24" width="204" height="44" rx="2"></rect>
+            <rect x="696" y="24" width="204" height="44" rx="2"></rect>
+            <rect x="0" y="80" width="204" height="44" rx="2"></rect>
+            <rect x="232" y="80" width="204" height="44" rx="2"></rect>
+            <rect x="464" y="80" width="204" height="44" rx="2"></rect>
+            <rect x="696" y="80" width="204" height="44" rx="2"></rect>
           </g>
-          <text x="15"  y="51">Amazon</text>
+          <text x="15" y="51">Amazon</text>
           <text x="247" y="51">eBay</text>
           <text x="479" y="51">Walmart</text>
           <text x="711" y="51">Support desk</text>
-          <text x="15"  y="107">Order management</text>
+          <text x="15" y="107">Order management</text>
           <text x="247" y="107">Carriers</text>
           <text x="479" y="107">Datastore</text>
           <text x="711" y="107">Pricing data</text>
@@ -131,73 +106,61 @@
         <text x="0" y="152" font-family="ui-monospace, Menlo, monospace" font-size="10.5" letter-spacing="1.4" fill="currentColor" opacity="0.75">…AND TWO SCHEDULED JOBS THAT LIVE HERE ANYWAY</text>
         <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
           <g stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" fill="currentColor" fill-opacity="0.05">
-            <rect x="0"   y="164" width="270" height="44" rx="2"/>
-            <rect x="292" y="164" width="270" height="44" rx="2"/>
+            <rect x="0" y="164" width="270" height="44" rx="2"></rect>
+            <rect x="292" y="164" width="270" height="44" rx="2"></rect>
           </g>
-          <text x="15"  y="191">order-auditing</text>
+          <text x="15" y="191">order-auditing</text>
           <text x="307" y="191">stalled-shipments</text>
         </g>
 
         <!-- bypass: routed under the strays so it doesn't cross them -->
         <g stroke="currentColor" stroke-opacity="0.55" fill="none">
-          <path d="M135 208 L135 224 L636 224" stroke-width="1.4" stroke-dasharray="5 3"/>
-          <path d="M628 219 L637 224 L628 229" stroke-width="1.4"/>
+          <path d="M135 208 L135 224 L636 224" stroke-width="1.4" stroke-dasharray="5 3"></path>
+          <path d="M628 219 L637 224 L628 229" stroke-width="1.4"></path>
         </g>
         <text x="646" y="220" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.75">bypasses layer 1,</text>
         <text x="646" y="236" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" fill="currentColor" opacity="0.75">imports its SDKs directly</text>
 
-        <line x1="0" y1="262" x2="900" y2="262" stroke="currentColor" stroke-opacity="0.16"/>
+        <line x1="0" y1="262" x2="900" y2="262" stroke="currentColor" stroke-opacity="0.16"></line>
 
         <!-- LAYER 2 -->
         <text x="0" y="288" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 2 · JOBS · one business outcome each, runs end to end alone</text>
         <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="currentColor">
-          <rect x="0" y="302" width="290" height="52" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.5"/>
+          <rect x="0" y="302" width="290" height="52" rx="2" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.5"></rect>
           <text x="15" y="326">returns-delivered</text>
           <text x="15" y="344" font-size="11.5" opacity="0.6">the only job in the right place</text>
 
-          <rect x="312" y="302" width="588" height="52" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"/>
+          <rect x="312" y="302" width="588" height="52" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="5 4"></rect>
           <text x="327" y="333" font-size="12.5" opacity="0.5">where the other two belong</text>
         </g>
 
-        <line x1="0" y1="378" x2="900" y2="378" stroke="currentColor" stroke-opacity="0.16"/>
+        <line x1="0" y1="378" x2="900" y2="378" stroke="currentColor" stroke-opacity="0.16"></line>
 
         <!-- LAYER 3 -->
         <text x="0" y="404" font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.6" fill="currentColor" opacity="0.55">LAYER 3 · PIPELINES · chains jobs into end-to-end processes</text>
-        <rect x="0" y="418" width="900" height="94" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
+        <rect x="0" y="418" width="900" height="94" rx="2" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"></rect>
         <text x="20" y="450" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="currentColor" opacity="0.8">Blocked, and not by time.</text>
         <text x="20" y="473" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.6">A pipeline has to call a job and receive a result. Two of the three are entry-point scripts</text>
         <text x="20" y="492" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor" opacity="0.6">that produce a side effect and an exit code, so there is nothing to hand to a next step.</text>
-      </svg>
+      </svg></div>
+          <figcaption style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-divider); max-width: 76ch; font-size: 14px; line-height: 23px; color: color-mix(in srgb, var(--color-text) 70%, transparent)">The system as it actually stands, not as the README describes it. Two of the three scheduled jobs sit in the connector layer, and one reaches past it entirely, which is why the pipeline layer has nothing to chain. Drawing the real state is the fastest way to show a new contributor both where their code belongs and where the existing code doesn’t.</figcaption>
+        </figure>
       </div>
-      <figcaption>The system as it actually stands, not as the README describes it. Two of the three
-      scheduled jobs sit in the connector layer, and one reaches past it entirely, which is why the
-      pipeline layer has nothing to chain. Drawing the real state is the fastest way to show a new
-      contributor both where their code belongs and where the existing code doesn't.</figcaption>
-    </figure>
-  </article>
+    </article>
 
-  <!-- 3 -->
-  <article class="entry">
-    <p class="status">Analysis · 2026</p>
-    <h2>What returns actually cost, and what the data would not tell us</h2>
-    <div class="col">
-      <p>A question that sounds like one query: what do marketplace returns cost us, and why are
-      customers returning things? The answer took four cuts: revenue impact by marketplace, returned
-      dollars by reason, the worst-offending titles under "not as described," and returns as a share
-      of gross sales.</p>
-      <p>Most of the effort went into decisions that never appear in the output. The obvious join key
-      was the wrong one: matching returns to order lines on the channel line id matched 82% of rows,
-      because one marketplace's line ids do not align. Matching on order plus SKU matched 96%. The
-      refund amount field was about 90% null, so returns had to be priced off the originating order
-      line instead. Line price is per unit, and order lines need deduplicating to one row per order
-      and SKU before joining, or multi-line units double-count. Each of those is documented in the
-      query header, because the next person to run it will otherwise rediscover them the expensive
-      way.</p>
-    </div>
+    <article data-grid="entry" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px clamp(24px, 4vw, 56px); align-items: start; padding: 64px 0 0; border-top: 1px solid var(--color-divider); margin-top: 64px">
+      <span style="font-family: var(--font-heading); font-weight: 600; font-size: 56px; line-height: 0.8; color: var(--color-accent-300); font-variant-numeric: tabular-nums">03</span>
+      <div>
+        <span class="tag tag-outline" style="font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase">Analysis · 2026</span>
+        <h2 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(28px, 3.2vw, 40px); line-height: 1.08; letter-spacing: 0.01em; text-transform: uppercase; margin: 16px 0 24px; max-width: 28ch">What returns actually cost, and what the data would not tell us</h2>
+        <div style="max-width: 68ch; display: flex; flex-direction: column; gap: 20px">
+          <p style="margin: 0">A question that sounds like one query: what do marketplace returns cost us, and why are customers returning things? The answer took four cuts: revenue impact by marketplace, returned dollars by reason, the worst-offending titles under “not as described,” and returns as a share of gross sales.</p>
+          <p style="margin: 0">Most of the effort went into decisions that never appear in the output. The obvious join key was the wrong one: matching returns to order lines on the channel line id matched 82% of rows, because one marketplace’s line ids do not align. Matching on order plus SKU matched 96%. The refund amount field was about 90% null, so returns had to be priced off the originating order line instead. Line price is per unit, and order lines need deduplicating to one row per order and SKU before joining, or multi-line units double-count. Each of those is documented in the query header, because the next person to run it will otherwise rediscover them the expensive way.</p>
+        </div>
 
-    <figure>
-      <div class="fig-scroll chart">
-      <svg viewBox="0 0 860 290" role="img" aria-labelledby="rettitle retdesc" style="max-width:860px">
+        <figure class="blueprint" style="margin: 40px 0 0; padding: clamp(20px, 3vw, 36px); color: var(--color-accent-800)">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="overflow-x: auto"><svg width="100%" viewBox="0 0 860 290" role="img" aria-labelledby="rettitle retdesc" style="max-width: 860px">
         <title id="rettitle">Returned revenue by reason category</title>
         <desc id="retdesc">Horizontal bar chart of synthetic returned revenue by reason. Not as described leads at 184,200 dollars, followed by changed mind at 96,400, arrived damaged at 71,800, no longer needed at 58,300, wrong item sent at 42,100 and defective on arrival at 38,900.</desc>
         <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="currentColor">
@@ -213,12 +176,12 @@
           </g>
 
           <g fill="currentColor">
-            <rect x="210" y="48"  width="520" height="24" opacity="0.72"/>
-            <rect x="210" y="86"  width="272" height="24" opacity="0.34"/>
-            <rect x="210" y="124" width="203" height="24" opacity="0.34"/>
-            <rect x="210" y="162" width="165" height="24" opacity="0.34"/>
-            <rect x="210" y="200" width="119" height="24" opacity="0.34"/>
-            <rect x="210" y="238" width="110" height="24" opacity="0.34"/>
+            <rect x="210" y="48" width="520" height="24" opacity="0.72"></rect>
+            <rect x="210" y="86" width="272" height="24" opacity="0.34"></rect>
+            <rect x="210" y="124" width="203" height="24" opacity="0.34"></rect>
+            <rect x="210" y="162" width="165" height="24" opacity="0.34"></rect>
+            <rect x="210" y="200" width="119" height="24" opacity="0.34"></rect>
+            <rect x="210" y="238" width="110" height="24" opacity="0.34"></rect>
           </g>
 
           <g font-family="ui-monospace, Menlo, monospace" font-size="12" opacity="0.75">
@@ -230,20 +193,16 @@
             <text x="332" y="256">$38,900</text>
           </g>
         </g>
-      </svg>
-      </div>
-      <figcaption>Synthetic figures, real shape. "Not as described" dominating is the finding that
-      sends you looking for listing-accuracy problems rather than fulfilment problems.</figcaption>
-    </figure>
+      </svg></div>
+          <figcaption style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-divider); max-width: 76ch; font-size: 14px; line-height: 23px; color: color-mix(in srgb, var(--color-text) 70%, transparent)">Synthetic figures, real shape. “Not as described” dominating is the finding that sends you looking for listing-accuracy problems rather than fulfilment problems.</figcaption>
+        </figure>
 
-    <div class="col">
-      <p>The part of this I would put in front of a hiring manager is not the chart. It is the
-      header of the query:</p>
-    </div>
+        
+        <p style="max-width: 68ch; margin: 36px 0 20px">The part of this I would put in front of a hiring manager is not the chart. It is the header of the query:</p>
 
-<pre><code><span class="c">-- Returns revenue impact by marketplace and reason.
+        <pre style="margin: 0; padding: clamp(18px, 2.4vw, 28px); background: var(--color-accent-900); color: color-mix(in srgb, #f5f5f8 92%, transparent); overflow-x: auto; font-size: 13px; line-height: 21px; font-family: ui-monospace, Menlo, Consolas, monospace"><code><span style="color: var(--color-accent-300)">-- Returns revenue impact by marketplace and reason.
 --
--- Join returns -> order_lines on (channel_order_id, channel_sku), NOT on the
+-- Join returns -&gt; order_lines on (channel_order_id, channel_sku), NOT on the
 -- channel line id: 96% match vs 82%. One marketplace's line ids don't align.
 --
 -- refund_amount is ~90% NULL on this source. Price the return off the
@@ -251,44 +210,37 @@
 --
 -- line_item_price is PER UNIT. Returned revenue = line_item_price * return_qty.
 -- Dedupe order_lines to one row per (order, sku) before joining, or units
--- with multiple lines double-count.</span>
+-- with multiple lines double-count.
 
-<span class="k">with</span> lines <span class="k">as</span> (
-  <span class="k">select</span> channel_order_id, channel_sku,
-         any_value(line_item_price) <span class="k">as</span> unit_price
-  <span class="k">from</span>   order_lines
-  <span class="k">group by</span> 1, 2                     <span class="c">-- one row per (order, sku)</span>
+</span><span style="font-weight: 700">with</span> lines <span style="font-weight: 700">as</span> (
+  <span style="font-weight: 700">select</span> channel_order_id, channel_sku,
+         any_value(line_item_price) <span style="font-weight: 700">as</span> unit_price
+  <span style="font-weight: 700">from</span>   order_lines
+  <span style="font-weight: 700">group by</span> 1, 2                     <span style="color: var(--color-accent-300)">-- one row per (order, sku)</span>
 )
-<span class="k">select</span>   r.marketplace,
+<span style="font-weight: 700">select</span>   r.marketplace,
          r.reason_category,
-         sum(l.unit_price * r.return_quantity) <span class="k">as</span> returned_revenue
-<span class="k">from</span>     returns r
-<span class="k">join</span>     lines   l <span class="k">using</span> (channel_order_id, channel_sku)
-<span class="k">group by</span> 1, 2
-<span class="k">order by</span> returned_revenue <span class="k">desc</span>;</code></pre>
+         sum(l.unit_price * r.return_quantity) <span style="font-weight: 700">as</span> returned_revenue
+<span style="font-weight: 700">from</span>     returns r
+<span style="font-weight: 700">join</span>     lines   l <span style="font-weight: 700">using</span> (channel_order_id, channel_sku)
+<span style="font-weight: 700">group by</span> 1, 2
+<span style="font-weight: 700">order by</span> returned_revenue <span style="font-weight: 700">desc</span>;</code></pre>
+        
 
-    <div class="col">
-      <div class="callout">
-        <p><strong>The limit worth stating.</strong> "Not as described" is the largest bucket, and it
-        is also the least informative, because it is a dropdown selection rather than an explanation. One
-        marketplace exposes the buyer's free-text comment through its post-order API, so I wrote a
-        second script to pull verbatims per return and read them. <strong>The largest marketplace has
-        no equivalent.</strong> Neither its API nor the warehouse carries buyer free-text, only the
-        reason code.</p>
-        <p>So the qualitative depth behind this chart exists for part of the business and cannot
-        exist for the rest. That belongs in the deliverable, stated plainly, rather than being
-        quietly papered over by presenting one channel's verbatims as if they described all of them.</p>
+        <div class="blueprint" style="margin: 36px 0 0; padding: clamp(20px, 2.6vw, 32px); max-width: 76ch; display: flex; flex-direction: column; gap: 16px">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <p style="margin: 0"><strong style="font-weight: 700">The limit worth stating.</strong> “Not as described” is the largest bucket, and it is also the least informative, because it is a dropdown selection rather than an explanation. One marketplace exposes the buyer’s free-text comment through its post-order API, so I wrote a second script to pull verbatims per return and read them. <strong style="font-weight: 700">The largest marketplace has no equivalent.</strong> Neither its API nor the warehouse carries buyer free-text, only the reason code.</p>
+          <p style="margin: 0">So the qualitative depth behind this chart exists for part of the business and cannot exist for the rest. That belongs in the deliverable, stated plainly, rather than being quietly papered over by presenting one channel’s verbatims as if they described all of them.</p>
+        </div>
       </div>
-    </div>
-  </article>
+    </article>
 
-</main>
+    <footer style="margin-top: 72px; border-top: 1px solid var(--color-divider); padding-top: 20px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">
+      <span>ERIC HUBBARD · HAYDEN, ID</span>
+      <span><a href="../" style="color: inherit">About</a></span>
+    </footer>
 
-<footer class="site-foot">
-  <span>Eric Hubbard · North Idaho</span>
-  <span><a href="/">About</a></span>
-</footer>
-
+  </div>
 </div>
 </body>
 </html>
